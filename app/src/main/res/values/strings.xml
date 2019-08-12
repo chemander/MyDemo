@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyDemo</string>
+
+    <string name="title_activity_reading">ReadingActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>
