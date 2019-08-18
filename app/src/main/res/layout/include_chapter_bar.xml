@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -13,7 +13,7 @@
         android:clipToPadding="false"
         app:cardBackgroundColor="@color/colorPrimary"
         android:alpha="0.97"
-        app:cardCornerRadius="3dp"
+        app:cardCornerRadius="1dp"
         app:cardElevation="3dp"
         app:cardUseCompatPadding="false"
         app:layout_collapseMode="parallax">
@@ -21,17 +21,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/bt_menu"
+                android:id="@+id/bt_back"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:tint="@android:color/black"
-                app:srcCompat="@drawable/ic_settings" />
-
-            <TextView
+                app:srcCompat="@drawable/ic_back" />
+            <!--<TextView
                 android:id="@+id/search_text"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -41,15 +41,24 @@
                 android:textAlignment="center"
                 android:text="Tên truyện ở đây nhé :)))"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-                 />
+                />-->
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.7"
+                android:id="@+id/spinner_chapter"
+                android:popupBackground="@color/colorPrimary"
+                ></androidx.appcompat.widget.AppCompatSpinner>
+
 
             <ImageButton
+                android:id="@+id/bt_settings"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
-                android:id="@+id/bt_continue"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:tint="@android:color/black"
-                app:srcCompat="@drawable/ic_mic" />
+                app:srcCompat="@drawable/ic_settings" />
 
         </LinearLayout>
 

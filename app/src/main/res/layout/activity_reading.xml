@@ -4,11 +4,14 @@
     android:id="@+id/bgLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <FrameLayout
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/bottom_sheet_behavior" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
         android:orientation="vertical">
         <ScrollView
             android:id="@+id/scrollReading"
@@ -19,18 +22,20 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:paddingBottom="2000dp"
             android:id="@+id/textviewMainContent"
             />
         </ScrollView>
     </LinearLayout>
-
+    <include
+        android:id="@+id/chapter_bar"
+        layout="@layout/include_chapter_bar" />
+    <include
+        android:id="@+id/chapter_select"
+        layout="@layout/include_chapter_select" />
     <!--bottom sheet container-->
-    <FrameLayout
-        android:id="@+id/bottom_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/bottom_sheet_behavior" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

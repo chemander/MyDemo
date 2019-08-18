@@ -11,5 +11,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_home"
         android:layout_width="match_parent"
+        android:overScrollMode="never"
         android:layout_height="wrap_content" />
 </androidx.core.widget.NestedScrollView>

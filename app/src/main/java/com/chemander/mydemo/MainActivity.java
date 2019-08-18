@@ -5,11 +5,15 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.chemander.mydemo.data.ReadJSON;
 import com.chemander.mydemo.model.Chapter;
+import com.chemander.mydemo.reading.ReadingActivity;
 import com.chemander.mydemo.utils.SettingsManager;
 
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private AdapterChapter adapterChapter;
     private List<Chapter> chapters;
     private View search_bar;
+    private ImageButton buttonContinue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         chapters = ReadJSON.readChapterFromJSONFile(getApplicationContext());
         adapterChapter = new AdapterChapter(this, chapters);
+        buttonContinue = (ImageButton)findViewById(R.id.bt_continue);
+
         recyclerView.setAdapter(adapterChapter);
 
         NestedScrollView nested_content = (NestedScrollView) findViewById(R.id.nested_scroll_view);
@@ -46,14 +53,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        nested_content.setOnClickListener(new View.OnClickListener() {
+        buttonContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isSearchBarHide){
-                    animateSearchBar(false);
-                }else{
-                    animateSearchBar(true);
-                }
+                Intent intent = new Intent(getApplicationContext(), ReadingActivity.class);
+                startActivity(intent);
             }
         });
     }
