@@ -1,19 +1,22 @@
 package com.chemander.mydemo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.chemander.mydemo.data.ReadJSON;
-import com.chemander.mydemo.data.model.Datum;
+import com.chemander.mydemo.data.model.GetInformation;
+import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
 import com.chemander.mydemo.model.Chapter;
 import com.chemander.mydemo.reading.ReadingActivity;
@@ -30,7 +33,9 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdapterChapter adapterChapter;
+    private AdapterStory adapterStory;
     private List<Chapter> chapters;
+    private List<StoryInformation> stories = new ArrayList<>();
     private View search_bar;
     private ImageButton buttonContinue;
 
@@ -38,15 +43,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d("Hung", "Permission not granted");
+        }
         setContentView(R.layout.activity_main);
         search_bar = (View) findViewById(R.id.search_bar);
         recyclerView = (RecyclerView)findViewById(R.id.recycler_home);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chapters = ReadJSON.readChapterFromJSONFile(getApplicationContext());
-        adapterChapter = new AdapterChapter(this, chapters);
+        adapterStory = new AdapterStory(getApplicationContext(), stories);
+        recyclerView.setAdapter(adapterStory);
+//        chapters = ReadJSON.readChapterFromJSONFile(getApplicationContext());
+//        adapterChapter = new AdapterChapter(this, chapters);
         buttonContinue = (ImageButton)findViewById(R.id.bt_continue);
 
-        recyclerView.setAdapter(adapterChapter);
+//        recyclerView.setAdapter(adapterChapter);
 
         NestedScrollView nested_content = (NestedScrollView) findViewById(R.id.nested_scroll_view);
         nested_content.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -72,20 +83,25 @@ public class MainActivity extends AppCompatActivity {
         });
 
         storyService = ApiUtils.getStoryService();
-        storyService.getStories().enqueue(new Callback<List<Datum>>() {
+        storyService.getStories(1).enqueue(new Callback<GetInformation>() {
             @Override
-            public void onResponse(Call<List<Datum>> call, Response<List<Datum>> response) {
+            public void onResponse(Call<GetInformation> call, Response<GetInformation> response) {
                 if(response.isSuccessful()){
-                    Log.d("Hung", "Total story = "+response.body().size());
+                    Log.d("Hung", "Total = "+response.body().getData().size());
+                    stories.addAll(response.body().getData());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapterStory.notifyDataSetChanged();
 
-                }else {
-                    Log.d("Hung", "Code = "+response.code());
-                }
+                        }
+                    });
+                }else Log.d("Hung", "Total = "+response.code());
             }
 
             @Override
-            public void onFailure(Call<List<Datum>> call, Throwable t) {
-                Log.d("Hung", "Cannot loading API");
+            public void onFailure(Call<GetInformation> call, Throwable t) {
+                Log.d("Hung", "Error = "+t.toString());
             }
         });
     }

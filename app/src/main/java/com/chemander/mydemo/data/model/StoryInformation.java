@@ -3,7 +3,7 @@ package com.chemander.mydemo.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Datum {
+public class StoryInformation {
 
     @SerializedName("_id")
     @Expose

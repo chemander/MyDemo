@@ -1,12 +1,12 @@
 package com.chemander.mydemo.data.remote;
 
-import com.chemander.mydemo.data.model.Datum;
-
-import java.util.List;
+import com.chemander.mydemo.data.model.GetInformation;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
+
 public interface StoryService {
-    @GET("stories")
-    Call<List<Datum>> getStories();
+    @GET("/api/stories")
+    Call<GetInformation> getStories(@Query("page") int page);
 }

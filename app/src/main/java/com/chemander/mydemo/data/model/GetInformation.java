@@ -17,7 +17,7 @@ public class GetInformation {
     private Integer totalPages;
     @SerializedName("data")
     @Expose
-    private List<Datum> data = null;
+    private List<StoryInformation> data = null;
 
     public Integer getPage() {
         return page;
@@ -43,11 +43,11 @@ public class GetInformation {
         this.totalPages = totalPages;
     }
 
-    public List<Datum> getData() {
+    public List<StoryInformation> getData() {
         return data;
     }
 
-    public void setData(List<Datum> data) {
+    public void setData(List<StoryInformation> data) {
         this.data = data;
     }
 

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageViewCover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:srcCompat="@tools:sample/avatars[0]" />
+
+
+            <TextView
+                android:id="@+id/textTitleStory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                app:layout_constraintBottom_toTopOf="@+id/textDescription"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="153dp" />
+
+            <TextView
+                android:id="@+id/textDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                app:layout_constraintBottom_toTopOf="@+id/textAuthor"
+                app:layout_constraintTop_toBottomOf="@+id/textTitleStory"
+                tools:layout_editor_absoluteX="153dp" />
+
+            <TextView
+                android:id="@+id/textAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Author"
+                app:layout_constraintBottom_toTopOf="@+id/textStatus"
+                app:layout_constraintTop_toBottomOf="@+id/textDescription"
+                tools:layout_editor_absoluteX="153dp" />
+
+            <TextView
+                android:id="@+id/textStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                app:layout_constraintBottom_toTopOf="@+id/textGenre"
+                app:layout_constraintTop_toBottomOf="@+id/textAuthor"
+                tools:layout_editor_absoluteX="153dp" />
+
+            <TextView
+                android:id="@+id/textGenre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Genre"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textStatus"
+                tools:layout_editor_absoluteX="153dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
