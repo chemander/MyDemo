@@ -3,7 +3,9 @@ package com.chemander.mydemo.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class StoryInformation {
+import java.io.Serializable;
+
+public class StoryInformation implements Serializable {
 
     @SerializedName("_id")
     @Expose
@@ -36,6 +38,8 @@ public class StoryInformation {
     @Expose
     private String storyId;
 
+    public StoryInformation(){
+    }
     public String getId() {
         return id;
     }

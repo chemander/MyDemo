@@ -5,11 +5,9 @@
     android:layout_height="wrap_content"
     android:id="@+id/layout_parent"
     android:focusable="false"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:clickable="false"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
-    android:clickable="false"
     android:descendantFocusability = "blocksDescendants"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">

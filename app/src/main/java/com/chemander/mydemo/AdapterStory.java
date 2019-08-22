@@ -2,6 +2,7 @@ package com.chemander.mydemo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +13,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.chemander.mydemo.data.model.StoryInformation;
+import com.chemander.mydemo.information.StoryInformationActivity;
 import com.chemander.mydemo.model.Chapter;
 import com.chemander.mydemo.reading.ReadingActivity;
 import com.chemander.mydemo.utils.SettingsManager;
@@ -45,7 +48,7 @@ public class AdapterStory extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         public TextView author;
         public TextView genre;
         public TextView status;
-        public CardView layout;
+        public ConstraintLayout layout;
         public ViewHolder(View view){
             super(view);
             cover = (ImageView) view.findViewById(R.id.imageViewCover);
@@ -54,7 +57,7 @@ public class AdapterStory extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             author = (TextView) view.findViewById(R.id.textAuthor);
             status = (TextView) view.findViewById(R.id.textStatus);
             genre = (TextView) view.findViewById(R.id.textGenre);
-//            layout = (CardView) view.findViewById(R.id.layout_cardview_story);
+            layout = (ConstraintLayout) view.findViewById(R.id.layout_constraint_story);
         }
     }
     @Override
@@ -71,24 +74,23 @@ public class AdapterStory extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             ViewHolder view = (ViewHolder) holder;
             final StoryInformation storyInformation = stories.get(position);
             Log.d("Hung", "stories Total = "+stories.size());
-            Glide.with(context).load(storyInformation.getImg()).override(240,300).centerCrop().into(view.cover);
+            Glide.with(context).load(storyInformation.getImg()).override(260,300).centerCrop().into(view.cover);
             view.title.setText(storyInformation.getTitle());
-            view.description.setText(storyInformation.getDescription());
-            view.author.setText(storyInformation.getAuthor());
-            view.status.setText(storyInformation.getStatus());
-            view.genre.setText(storyInformation.getGenre());
-//            view.layout.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (SettingsManager.preferenceCurrentChapter != position) {
-//                        SettingsManager.preferenceCurrentChapter = position;
-//                        SettingsManager.preferenceCurrentPosition = 0;
-//                        SettingsManager.saveSettings(context);
-//                    }
-//                    Intent intent = new Intent(context, ReadingActivity.class);
-//                    context.startActivity(intent);
-//                }
-//            });
+            view.description.setText("Mô tả:"+ storyInformation.getDescription());
+            view.author.setText("Tác giả: "+storyInformation.getAuthor());
+            view.status.setText("Thể loại: "+storyInformation.getStatus());
+            view.genre.setText("Trạng thái: "+storyInformation.getGenre());
+            view.layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable(SettingsManager.STORY_INFORMATION, storyInformation);
+                    Intent intent = new Intent(context, StoryInformationActivity.class);
+                    intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 

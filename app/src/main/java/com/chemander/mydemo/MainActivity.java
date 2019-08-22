@@ -1,5 +1,6 @@
 package com.chemander.mydemo;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
@@ -11,8 +12,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.chemander.mydemo.data.ReadJSON;
 import com.chemander.mydemo.data.model.GetInformation;
@@ -22,6 +27,7 @@ import com.chemander.mydemo.model.Chapter;
 import com.chemander.mydemo.reading.ReadingActivity;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +44,21 @@ public class MainActivity extends AppCompatActivity {
     private List<StoryInformation> stories = new ArrayList<>();
     private View search_bar;
     private ImageButton buttonContinue;
-
+    private BottomNavigationView bottomNavigationView;
+    private TextView mTitle;
     private StoryService storyService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.d("Hung", "Permission not granted");
         }
         setContentView(R.layout.activity_main);
+        mTitle = (TextView)findViewById(R.id.search_text);
         search_bar = (View) findViewById(R.id.search_bar);
+        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
         recyclerView = (RecyclerView)findViewById(R.id.recycler_home);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapterStory = new AdapterStory(getApplicationContext(), stories);
@@ -74,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        initComponent();
+    }
+
+    public void initComponent(){
         buttonContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,8 +116,49 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<GetInformation> call, Throwable t) {
                 Log.d("Hung", "Error = "+t.toString());
+                stories.addAll(ReadJSON.readStoryInformationsFromJSONFile(getApplicationContext()));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapterStory.notifyDataSetChanged();
+
+                    }
+                });
             }
         });
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+                switch (menuItem.getItemId()){
+                    case R.id.navigation_home:
+                        mTitle.setText(menuItem.getTitle());
+                        animateSearchBar(false);
+                        return true;
+                    case R.id.navigation_library:
+                        mTitle.setText(menuItem.getTitle());
+                        animateSearchBar(false);
+                        return true;
+                    case R.id.navigation_Download:
+                        mTitle.setText(menuItem.getTitle());
+                        animateSearchBar(false);
+                        return true;
+                    case R.id.navigation_account:
+                        mTitle.setText(menuItem.getTitle());
+                        animateSearchBar(false);
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(getApplication(), R.anim.layout_animation_fall_down);
+
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
     }
 
     boolean isSearchBarHide = false;

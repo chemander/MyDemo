@@ -10,6 +10,7 @@ import com.chemander.mydemo.MainActivity;
 import java.io.IOException;
 
 public class SettingsManager {
+    public static final String STORY_INFORMATION = "storyInformation";
     public static float preferenceFontSize;
     private static final String FONT_SIZE = "fontSize";
     public static int preferenceFontType;

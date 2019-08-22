@@ -68,6 +68,7 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         setContentView(R.layout.activity_reading);
         bottom_sheet = findViewById(R.id.bottom_sheet);
         mBehavior = BottomSheetBehavior.from(bottom_sheet);
@@ -130,6 +131,7 @@ public class ReadingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
             }
         });
 
@@ -258,6 +260,13 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
     @Override
     protected void onPause() {
         SettingsManager.preferenceCurrentPosition = scrollView.getScrollY();
@@ -428,6 +437,7 @@ public class ReadingActivity extends AppCompatActivity {
         int moveYY = hide ? (2 * chapter_select.getHeight()) : 0;
         chapter_select.animate().translationY(moveYY).setStartDelay(100).setDuration(300).start();
     }
+
 
 
 }

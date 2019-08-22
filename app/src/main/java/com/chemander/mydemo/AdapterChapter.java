@@ -68,6 +68,7 @@ public class AdapterChapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         SettingsManager.saveSettings(context);
                     }
                     Intent intent = new Intent(context, ReadingActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
             });
