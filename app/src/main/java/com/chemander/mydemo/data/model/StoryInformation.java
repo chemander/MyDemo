@@ -1,123 +1,187 @@
 package com.chemander.mydemo.data.model;
 
+import android.widget.ImageView;
+
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.library.baseAdapters.BR;
+import androidx.recyclerview.widget.DiffUtil;
+
+import com.bumptech.glide.Glide;
+import com.chemander.mydemo.R;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class StoryInformation implements Serializable {
+public class StoryInformation extends BaseObservable implements Serializable {
 
+    @SerializedName("storyCountView")
+    @Expose
+    private Integer storyCountView;
     @SerializedName("_id")
     @Expose
     private String id;
-    @SerializedName("url")
+    @SerializedName("storyURL")
     @Expose
-    private String url;
-    @SerializedName("description")
+    private String storyURL;
+    @SerializedName("storyID")
     @Expose
-    private String description;
-    @SerializedName("img")
+    private String storyID;
+    @SerializedName("storyImgUrl")
     @Expose
-    private String img;
-    @SerializedName("title")
+    private String storyImgUrl;
+    @SerializedName("storyName")
     @Expose
-    private String title;
-    @SerializedName("author")
+    private String storyName;
+    @SerializedName("storyDescription")
     @Expose
-    private String author;
-    @SerializedName("genre")
+    private String storyDescription;
+    @SerializedName("storyAuthor")
     @Expose
-    private String genre;
-    @SerializedName("source")
+    private String storyAuthor;
+    @SerializedName("storyGenre")
     @Expose
-    private String source;
-    @SerializedName("status")
+    private String storyGenre;
+    @SerializedName("storyStatus")
     @Expose
-    private String status;
-    @SerializedName("story_id")
+    private Object storyStatus;
+    @SerializedName("storyUpdated")
     @Expose
-    private String storyId;
+    private Integer storyUpdated;
 
-    public StoryInformation(){
+
+    @BindingAdapter({ "storyImgUrl" })
+    public static void loadImage(ImageView imageView, String imageURL) {
+
+        Glide.with(imageView.getContext())
+                .load(imageURL)
+                .override(260,300)
+//                .placeholder(R.drawable.loading)
+                .into(imageView);
     }
+
+    @Bindable
+    public Integer getStoryCountView() {
+        return storyCountView;
+    }
+
+    public void setStoryCountView(Integer storyCountView) {
+        this.storyCountView = storyCountView;
+        notifyPropertyChanged(BR.storyCountView);
+    }
+
+    @Bindable
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+        notifyPropertyChanged(BR.id);
     }
 
-    public String getUrl() {
-        return url;
+    @Bindable
+    public String getStoryURL() {
+        return storyURL;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setStoryURL(String storyURL) {
+        this.storyURL = storyURL;
+        notifyPropertyChanged(BR.storyURL);
     }
 
-    public String getDescription() {
-        return description;
+    @Bindable
+    public String getStoryID() {
+        return storyID;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setStoryID(String storyID) {
+        this.storyID = storyID;
+        notifyPropertyChanged(BR.storyID);
     }
 
-    public String getImg() {
-        return img;
+    @Bindable
+    public String getStoryImgUrl() {
+        return storyImgUrl;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setStoryImgUrl(String storyImgUrl) {
+        this.storyImgUrl = storyImgUrl;
+        notifyPropertyChanged(BR.storyImgUrl);
     }
 
-    public String getTitle() {
-        return title;
+    @Bindable
+    public String getStoryName() {
+        return storyName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setStoryName(String storyName) {
+        this.storyName = storyName;
+        notifyPropertyChanged(BR.storyName);
     }
 
-    public String getAuthor() {
-        return author;
+    @Bindable
+    public String getStoryDescription() {
+        return storyDescription;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setStoryDescription(String storyDescription) {
+        this.storyDescription = storyDescription;
+        notifyPropertyChanged(BR.storyDescription);
     }
 
-    public String getGenre() {
-        return genre;
+    @Bindable
+    public String getStoryAuthor() {
+        return storyAuthor;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    public void setStoryAuthor(String storyAuthor) {
+        this.storyAuthor = storyAuthor;
+        notifyPropertyChanged(BR.storyAuthor);
     }
 
-    public String getSource() {
-        return source;
+    @Bindable
+    public String getStoryGenre() {
+        return storyGenre;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setStoryGenre(String storyGenre) {
+        this.storyGenre = storyGenre;
+        notifyPropertyChanged(BR.storyGenre);
     }
 
-    public String getStatus() {
-        return status;
+    @Bindable
+    public Object getStoryStatus() {
+        return storyStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStoryStatus(Object storyStatus) {
+        this.storyStatus = storyStatus;
+        notifyPropertyChanged(BR.storyStatus);
     }
 
-    public String getStoryId() {
-        return storyId;
+    @Bindable
+    public Integer getStoryUpdated() {
+        return storyUpdated;
     }
 
-    public void setStoryId(String storyId) {
-        this.storyId = storyId;
+    public void setStoryUpdated(Integer storyUpdated) {
+        this.storyUpdated = storyUpdated;
+        notifyPropertyChanged(BR.storyUpdated);
     }
+
+    public static final DiffUtil.ItemCallback<StoryInformation> CALLBACK = new DiffUtil.ItemCallback<StoryInformation>() {
+        @Override
+        public boolean areItemsTheSame(StoryInformation oldItem, StoryInformation newItem) {
+            return oldItem.id == newItem.id;
+        }
+
+        @Override
+        public boolean areContentsTheSame(StoryInformation oldItem, StoryInformation newItem) {
+            return true;
+        }
+    };
 
 }

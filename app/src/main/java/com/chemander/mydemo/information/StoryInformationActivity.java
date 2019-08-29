@@ -1,7 +1,6 @@
 package com.chemander.mydemo.information;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,11 +18,21 @@ import com.bumptech.glide.Glide;
 import com.chemander.mydemo.AdapterChapter;
 import com.chemander.mydemo.R;
 import com.chemander.mydemo.data.ReadJSON;
+import com.chemander.mydemo.data.model.ChapterInformation;
+import com.chemander.mydemo.data.model.GetChaptersInformation;
+import com.chemander.mydemo.data.model.GetStoriesInformation;
 import com.chemander.mydemo.data.model.StoryInformation;
+import com.chemander.mydemo.data.remote.StoryService;
 import com.chemander.mydemo.model.Chapter;
+import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class StoryInformationActivity extends AppCompatActivity {
     private StoryInformation storyInformation;
@@ -38,7 +47,9 @@ public class StoryInformationActivity extends AppCompatActivity {
 
     public RecyclerView recyclerView;
     private AdapterChapter adapterChapter;
-    private List<Chapter> chapters;
+    private List<ChapterInformation> chapters;
+    private StoryService storyService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,14 +77,14 @@ public class StoryInformationActivity extends AppCompatActivity {
     }
 
     private void setParameters() {
-        Glide.with(this).load(storyInformation.getImg()).override(300,350).centerCrop().into(cover);
-        title.setText(storyInformation.getTitle());
-        titleStoryBar.setText(storyInformation.getTitle());
-        description.setText("Mô tả:"+ storyInformation.getDescription());
-        author.setText("Tác giả: "+storyInformation.getAuthor());
-        status.setText("Thể loại: "+storyInformation.getStatus());
-        genre.setText("Trạng thái: "+storyInformation.getGenre());
-        chapters = ReadJSON.readChapterFromJSONFile(getApplicationContext());
+        Glide.with(this).load(storyInformation.getStoryImgUrl()).override(300,350).centerCrop().into(cover);
+        title.setText(storyInformation.getStoryName());
+        titleStoryBar.setText(storyInformation.getStoryName());
+        description.setText("Mô tả:"+ storyInformation.getStoryDescription());
+        author.setText("Tác giả: "+storyInformation.getStoryAuthor());
+        status.setText("Thể loại: "+storyInformation.getStoryGenre());
+        genre.setText("Trạng thái: "+storyInformation.getStoryStatus());
+        chapters = new ArrayList<>();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -95,6 +106,37 @@ public class StoryInformationActivity extends AppCompatActivity {
             public void onClick(View view) {
                 finish();
                 overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+            }
+        });
+
+        storyService = ApiUtils.getStoryService();
+        storyService.getChapters(storyInformation.getStoryID(), 1,2000).enqueue(new Callback<GetChaptersInformation>() {
+            @Override
+            public void onResponse(Call<GetChaptersInformation> call, Response<GetChaptersInformation> response) {
+                if(response.isSuccessful()){
+                    Log.d("Hung", "Total = "+response.body().getData().size());
+                    chapters.addAll(response.body().getData());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapterChapter.notifyDataSetChanged();
+
+                        }
+                    });
+                }else Log.d("Hung", "Total = "+response.code());
+            }
+
+            @Override
+            public void onFailure(Call<GetChaptersInformation> call, Throwable t) {
+                Log.d("Hung", "Error = "+t.toString());
+//                chapters.addAll(ReadJSON.readStoryInformationsFromJSONFile(getApplicationContext()));
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        adapterStory.notifyDataSetChanged();
+//
+//                    }
+//                });
             }
         });
     }

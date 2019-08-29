@@ -1,4 +1,4 @@
-package com.chemander.mydemo;
+package com.chemander.mydemo.information;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.chemander.mydemo.R;
 import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.information.StoryInformationActivity;
 import com.chemander.mydemo.model.Chapter;
@@ -26,7 +27,7 @@ import com.chemander.mydemo.utils.SettingsManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterStory extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private List<StoryInformation> stories = new ArrayList<>();
     private Context context;
 
@@ -36,7 +37,7 @@ public class AdapterStory extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         this.onItemClickListener = onItemClickListener;
     }
 
-    public AdapterStory(Context context, List<StoryInformation> chapters){
+    public StoryAdapter(Context context, List<StoryInformation> chapters){
         this.context = context;
         this.stories = chapters;
     }
@@ -74,12 +75,12 @@ public class AdapterStory extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             ViewHolder view = (ViewHolder) holder;
             final StoryInformation storyInformation = stories.get(position);
             Log.d("Hung", "stories Total = "+stories.size());
-            Glide.with(context).load(storyInformation.getImg()).override(260,300).centerCrop().into(view.cover);
-            view.title.setText(storyInformation.getTitle());
-            view.description.setText("Mô tả:"+ storyInformation.getDescription());
-            view.author.setText("Tác giả: "+storyInformation.getAuthor());
-            view.status.setText("Thể loại: "+storyInformation.getStatus());
-            view.genre.setText("Trạng thái: "+storyInformation.getGenre());
+            Glide.with(context).load(storyInformation.getStoryImgUrl()).override(260,300).centerCrop().into(view.cover);
+            view.title.setText(storyInformation.getStoryName());
+            view.description.setText("Mô tả:"+ storyInformation.getStoryDescription());
+            view.author.setText("Tác giả: "+storyInformation.getStoryAuthor());
+            view.status.setText("Thể loại: "+storyInformation.getStoryGenre());
+            view.genre.setText("Trạng thái: "+storyInformation.getStoryStatus());
             view.layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

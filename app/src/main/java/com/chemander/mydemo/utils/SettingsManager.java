@@ -10,6 +10,14 @@ import com.chemander.mydemo.MainActivity;
 import java.io.IOException;
 
 public class SettingsManager {
+    //Intent keyword
+    public final static String TITLE_STORY_LIST = "title";
+    public final static String ID_OF_STORY = "storyId";
+    public final static int SIZE_OF_PAGE = 20;
+    public final static int NEWS_STORY_LIST = 1;
+    public final static int HOT_STORY_LIST = 2;
+    public final static int FINISH_STORY_LIST = 3;
+    ////////
     public static final String STORY_INFORMATION = "storyInformation";
     public static float preferenceFontSize;
     private static final String FONT_SIZE = "fontSize";

@@ -4,7 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -19,10 +20,11 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.chemander.mydemo.data.ReadJSON;
-import com.chemander.mydemo.data.model.GetInformation;
+import com.chemander.mydemo.data.model.GetStoriesInformation;
 import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
+import com.chemander.mydemo.home.HomeFragment;
+import com.chemander.mydemo.information.StoryAdapter;
 import com.chemander.mydemo.model.Chapter;
 import com.chemander.mydemo.reading.ReadingActivity;
 import com.chemander.mydemo.utils.ApiUtils;
@@ -39,7 +41,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdapterChapter adapterChapter;
-    private AdapterStory adapterStory;
+    private StoryAdapter storyAdapter;
     private List<Chapter> chapters;
     private List<StoryInformation> stories = new ArrayList<>();
     private View search_bar;
@@ -47,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private TextView mTitle;
     private StoryService storyService;
+    private HomeFragment homeFragment;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,10 +65,19 @@ public class MainActivity extends AppCompatActivity {
         mTitle = (TextView)findViewById(R.id.search_text);
         search_bar = (View) findViewById(R.id.search_bar);
         bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_home);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapterStory = new AdapterStory(getApplicationContext(), stories);
-        recyclerView.setAdapter(adapterStory);
+//        recyclerView = (RecyclerView)findViewById(R.id.recycler_home);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        storyAdapter = new StoryAdapter(getApplicationContext(), stories);
+//        recyclerView.setAdapter(storyAdapter);
+
+        //init fragment
+        homeFragment = new HomeFragment();
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        if(savedInstanceState==null) {
+            fragmentTransaction.add(R.id.main_fragment, homeFragment);
+            fragmentTransaction.commit();
+        }
 //        chapters = ReadJSON.readChapterFromJSONFile(getApplicationContext());
 //        adapterChapter = new AdapterChapter(this, chapters);
         buttonContinue = (ImageButton)findViewById(R.id.bt_continue);
@@ -84,8 +99,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        initComponent();
+//        initComponent();
     }
+
+
 
     public void initComponent(){
         buttonContinue.setOnClickListener(new View.OnClickListener() {
@@ -97,16 +114,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         storyService = ApiUtils.getStoryService();
-        storyService.getStories(1).enqueue(new Callback<GetInformation>() {
+        storyService.getStories(1, 20, "", "", "").enqueue(new Callback<GetStoriesInformation>() {
             @Override
-            public void onResponse(Call<GetInformation> call, Response<GetInformation> response) {
+            public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
                 if(response.isSuccessful()){
                     Log.d("Hung", "Total = "+response.body().getData().size());
                     stories.addAll(response.body().getData());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            adapterStory.notifyDataSetChanged();
+                            storyAdapter.notifyDataSetChanged();
 
                         }
                     });
@@ -114,16 +131,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<GetInformation> call, Throwable t) {
+            public void onFailure(Call<GetStoriesInformation> call, Throwable t) {
                 Log.d("Hung", "Error = "+t.toString());
-                stories.addAll(ReadJSON.readStoryInformationsFromJSONFile(getApplicationContext()));
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapterStory.notifyDataSetChanged();
-
-                    }
-                });
             }
         });
 

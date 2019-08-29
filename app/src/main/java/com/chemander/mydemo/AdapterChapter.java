@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chemander.mydemo.data.model.ChapterInformation;
 import com.chemander.mydemo.model.Chapter;
 import com.chemander.mydemo.reading.ReadingActivity;
 import com.chemander.mydemo.utils.SettingsManager;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterChapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-    private List<Chapter> chapters = new ArrayList<>();
+    private List<ChapterInformation> chapters = new ArrayList<>();
     private Context context;
 
     private AdapterView.OnItemClickListener onItemClickListener;
@@ -31,7 +32,7 @@ public class AdapterChapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.onItemClickListener = onItemClickListener;
     }
 
-    public AdapterChapter(Context context, List<Chapter> chapters){
+    public AdapterChapter(Context context, List<ChapterInformation> chapters){
         this.context = context;
         this.chapters = chapters;
     }
@@ -57,8 +58,8 @@ public class AdapterChapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof ViewHolder) {
             ViewHolder view = (ViewHolder) holder;
-            final Chapter chapter = chapters.get(position);
-            view.title.setText(chapter.getTitle());
+            final ChapterInformation chapter = chapters.get(position);
+            view.title.setText(chapter.getChapterName());
             view.layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -80,7 +81,7 @@ public class AdapterChapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return chapters.size();
     }
 
-    public Chapter getChapter(int position){
+    public ChapterInformation getChapter(int position){
         return chapters.get(position);
     }
 }

@@ -55,44 +55,4 @@ public class ReadJSON {
         return sb.toString();
     }
 
-    public static List<StoryInformation> readStoryInformationsFromJSONFile(Context context){
-        try {
-            String jsonText = readText(context, R.raw.demo);
-            JSONObject jsonObject = new JSONObject(jsonText);
-            JSONArray jsonArray = jsonObject.getJSONArray("data");
-            List<StoryInformation> storyInformations = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                String _id = jsonObject1.getString("_id");
-                String url = jsonObject1.getString("url");
-                String description = jsonObject1.getString("description");
-                String img = jsonObject1.getString("img");
-                String title = jsonObject1.getString("title");
-                String author = jsonObject1.getString("author");
-                String genre = jsonObject1.getString("genre");
-                String source = jsonObject1.getString("source");
-                String status = jsonObject1.getString("status");
-                String story_id = jsonObject1.getString("story_id");
-                StoryInformation storyInformation = new StoryInformation();
-                storyInformation.setId(_id);
-                storyInformation.setUrl(url);
-                storyInformation.setDescription(description);
-                storyInformation.setImg(img);
-                storyInformation.setTitle(title);
-                storyInformation.setAuthor(author);
-                storyInformation.setGenre(genre);
-                storyInformation.setSource(source);
-                storyInformation.setStatus(status);
-                storyInformation.setStoryId(story_id);
-                storyInformations.add(storyInformation);
-            }
-            return storyInformations;
-        } catch (JSONException e) {
-            throw new RuntimeException("JSONException" + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException("IOException" + e.getMessage());
-        }finally {
-//            return null;
-        }
-    }
 }
