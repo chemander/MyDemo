@@ -74,7 +74,6 @@ public class StoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         if (holder instanceof ViewHolder) {
             ViewHolder view = (ViewHolder) holder;
             final StoryInformation storyInformation = stories.get(position);
-            Log.d("Hung", "stories Total = "+stories.size());
             Glide.with(context).load(storyInformation.getStoryImgUrl()).override(260,300).centerCrop().into(view.cover);
             view.title.setText(storyInformation.getStoryName());
             view.description.setText("Mô tả:"+ storyInformation.getStoryDescription());

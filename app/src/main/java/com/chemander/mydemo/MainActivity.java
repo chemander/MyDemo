@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
-            Log.d("Hung", "Permission not granted");
         }
         setContentView(R.layout.activity_main);
         mTitle = (TextView)findViewById(R.id.search_text);
@@ -118,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
                 if(response.isSuccessful()){
-                    Log.d("Hung", "Total = "+response.body().getData().size());
                     stories.addAll(response.body().getData());
                     runOnUiThread(new Runnable() {
                         @Override

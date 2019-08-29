@@ -35,7 +35,7 @@ public class StoryInformationDataSource extends PageKeyedDataSource<Integer, Sto
                 if(response.isSuccessful()){
                     GetStoriesInformation getStoriesInformation = response.body();
                     if(getStoriesInformation != null && getStoriesInformation.getData() != null){
-                        storyInformations.addAll(getStoriesInformation.getData());
+                        storyInformations = (ArrayList<StoryInformation>)getStoriesInformation.getData();
                         callback.onResult(storyInformations, null, 2);
                     }
                 }else{
@@ -65,7 +65,7 @@ public class StoryInformationDataSource extends PageKeyedDataSource<Integer, Sto
                 if(response.isSuccessful()){
                     GetStoriesInformation getStoriesInformation = response.body();
                     if(getStoriesInformation != null && getStoriesInformation.getData() != null){
-                        storyInformations.addAll(getStoriesInformation.getData());
+                        storyInformations = (ArrayList<StoryInformation>)getStoriesInformation.getData();
                         callback.onResult(storyInformations, params.key+1);
                     }
                 }else{

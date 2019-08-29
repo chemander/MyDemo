@@ -1,12 +1,14 @@
 package com.chemander.mydemo.information;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
@@ -30,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StoryInformationListActivity extends AppCompatActivity {
+public class StoryInformationListActivity extends AppCompatActivity implements LifecycleOwner {
     private RecyclerView listStoryRecycle;
     private TextView titleOfList;
     private ImageButton imageButtonBack;
@@ -47,40 +49,42 @@ public class StoryInformationListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_information_list);
-        titleOfList = (TextView)findViewById(R.id.text_story_information_title);
+//        titleOfList = (TextView)findViewById(R.id.text_story_information_title);
         typeOfList = getIntent().getIntExtra(SettingsManager.TITLE_STORY_LIST, 1);
-        imageButtonBack = (ImageButton) findViewById(R.id.bt_back);
+//        imageButtonBack = (ImageButton) findViewById(R.id.bt_back);
 
-        listStoryRecycle = (RecyclerView) findViewById(R.id.recycler_list_story);
-        listStoryRecycle.setLayoutManager(new LinearLayoutManager(this));
+//        listStoryRecycle = (RecyclerView) findViewById(R.id.recycler_list_story);
+//        listStoryRecycle.setLayoutManager(new LinearLayoutManager(this));
         storyInformationList = new ArrayList<>();
         storyAdapter = new StoryAdapter(getApplicationContext(), storyInformationList);
 
-        listStoryRecycle.setAdapter(storyAdapter);
+//        listStoryRecycle.setAdapter(storyAdapter);
         storyService = ApiUtils.getStoryService();
 
         activityStoryInformationListBinding = DataBindingUtil.setContentView(this, R.layout.activity_story_information_list);
+        titleOfList = activityStoryInformationListBinding.storyInformationBar.findViewById(R.id.text_story_information_title);
+        imageButtonBack = activityStoryInformationListBinding.storyInformationBar.findViewById(R.id.bt_back);
 //        storyInformationViewModel = ViewModelProviders.of(this).get(StoryInformationViewModel.class);
-        storyInformationViewModel = ViewModelProviders.of(this, new StoryInformationViewModelFactory(getApplication())).get(StoryInformationViewModel.class);
-//        initComponents();
+        storyInformationViewModel = ViewModelProviders.of(this).get(StoryInformationViewModel.class);
+        initComponents();
         showOnRecyclerView();
     }
 
     private void initComponents() {
         switch (typeOfList){
             case SettingsManager.NEWS_STORY_LIST:
-                titleOfList.setText("Truuyện mới cập nhật");
+                titleOfList.setText("Truyện mới cập nhật");
                 break;
             case SettingsManager.HOT_STORY_LIST:
-                titleOfList.setText("Truuyện theo xu hướng");
+                titleOfList.setText("Truyện theo xu hướng");
                 break;
             case SettingsManager.FINISH_STORY_LIST:
-                titleOfList.setText("Truuyện đã hoàn thành");
+                titleOfList.setText("Truyện đã hoàn thành");
                 break;
                 default: return;
         }
 
-        getListStories(1);
+//        getListStories(1);
         imageButtonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,6 +95,8 @@ public class StoryInformationListActivity extends AppCompatActivity {
 
     private void showOnRecyclerView(){
         listStoryRecycle = activityStoryInformationListBinding.recyclerListStory;
+        listStoryRecycle.setLayoutManager(new LinearLayoutManager(this));
+//        listStoryRecycle.setHasFixedSize(true);
         storyPagedListAdapter = new StoryPagedListAdapter(this);
         storyInformationViewModel.getStoryPagedList().observe(this, new Observer<PagedList<StoryInformation>>() {
             @Override
@@ -159,5 +165,10 @@ public class StoryInformationListActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
     }
 }

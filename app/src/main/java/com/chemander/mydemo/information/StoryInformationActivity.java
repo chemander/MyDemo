@@ -114,7 +114,6 @@ public class StoryInformationActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<GetChaptersInformation> call, Response<GetChaptersInformation> response) {
                 if(response.isSuccessful()){
-                    Log.d("Hung", "Total = "+response.body().getData().size());
                     chapters.addAll(response.body().getData());
                     runOnUiThread(new Runnable() {
                         @Override

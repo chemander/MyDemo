@@ -1,6 +1,7 @@
 package com.chemander.mydemo.data.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -26,7 +27,7 @@ public class StoryInformationViewModel extends AndroidViewModel {
     public StoryInformationViewModel(@NonNull Application application) {
         super(application);
 
-        StoryService storyService = ApiUtils.getStoryService();
+//        StoryService storyService = ApiUtils.getStoryService();
         StoryInformationDataSourceFactory factory = new StoryInformationDataSourceFactory();
 
         PagedList.Config config = (new PagedList.Config.Builder())

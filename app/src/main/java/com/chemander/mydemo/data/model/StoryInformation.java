@@ -58,7 +58,7 @@ public class StoryInformation extends BaseObservable implements Serializable {
         Glide.with(imageView.getContext())
                 .load(imageURL)
                 .override(260,300)
-//                .placeholder(R.drawable.loading)
+                .placeholder(R.drawable.ic_close)
                 .into(imageView);
     }
 

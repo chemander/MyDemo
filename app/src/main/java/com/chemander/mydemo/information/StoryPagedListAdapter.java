@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chemander.mydemo.R;
@@ -30,10 +31,11 @@ public class StoryPagedListAdapter extends PagedListAdapter<StoryInformation, St
         return new StoryViewHolder(itemStoryInformationDataBindBinding);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull StoryViewHolder holder, int position) {
         StoryInformation storyInformation = getItem(position);
-        storyInformation.setStoryImgUrl(storyInformation.getStoryURL());
+//        storyInformation.setStoryImgUrl(storyInformation.getStoryImgUrl());
         holder.itemStoryInformationDataBindBinding.setStory(storyInformation);
     }
 
@@ -45,4 +47,21 @@ public class StoryPagedListAdapter extends PagedListAdapter<StoryInformation, St
             this.itemStoryInformationDataBindBinding = itemStoryInformationDataBindBinding;
         }
     }
+
+    private static DiffUtil.ItemCallback<StoryInformation> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<StoryInformation>() {
+                // Concert details may have changed if reloaded from the database,
+                // but ID is fixed.
+                @Override
+                public boolean areItemsTheSame(StoryInformation oldConcert, StoryInformation
+                        newConcert) {
+                    return oldConcert.getId() == newConcert.getId();
+                }
+
+                @Override
+                public boolean areContentsTheSame(StoryInformation oldConcert,
+                                                  StoryInformation newConcert) {
+                    return true;
+                }
+            };
 }
