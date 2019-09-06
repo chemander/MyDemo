@@ -15,7 +15,7 @@
         android:clipToPadding="false"
         app:cardBackgroundColor="@color/colorPrimary"
         android:alpha="0.97"
-        app:cardCornerRadius="3dp"
+        app:cardCornerRadius="1dp"
         app:cardElevation="3dp"
         app:cardUseCompatPadding="false"
         app:layout_collapseMode="parallax">
@@ -120,6 +120,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:tint="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/bt_previous"
                 app:srcCompat="@drawable/ic_increase" />

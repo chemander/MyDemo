@@ -1,10 +1,12 @@
-package com.chemander.mydemo.data.model;
+package com.chemander.mydemo.data.model.source;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.paging.PageKeyedDataSource;
 
+import com.chemander.mydemo.data.model.GetStoriesInformation;
+import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
@@ -16,10 +18,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StoryInformationDataSource extends PageKeyedDataSource<Integer, StoryInformation> {
+public class StoryInformationNewsListDataSource extends PageKeyedDataSource<Integer, StoryInformation> {
     private StoryService storyService;
 
-    public StoryInformationDataSource(){
+    public StoryInformationNewsListDataSource(){
         this.storyService = ApiUtils.getStoryService();
     }
 
@@ -27,15 +29,15 @@ public class StoryInformationDataSource extends PageKeyedDataSource<Integer, Sto
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, StoryInformation> callback) {
         storyService = ApiUtils.getStoryService();
-        storyService.getStories(1, SettingsManager.SIZE_OF_PAGE, "", "", "").enqueue(new Callback<GetStoriesInformation>() {
+        storyService.getNewsStories(1, SettingsManager.SIZE_OF_PAGE).enqueue(new Callback<GetStoriesInformation>() {
             @Override
             public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
-
+                Log.d("Hung", "Log.d(\"Hung\", \"Cannot load data\"); load data");
                 List<StoryInformation> storyInformations = new ArrayList<>();
                 if(response.isSuccessful()){
                     GetStoriesInformation getStoriesInformation = response.body();
-                    if(getStoriesInformation != null && getStoriesInformation.getData() != null){
-                        storyInformations = (ArrayList<StoryInformation>)getStoriesInformation.getData();
+                    if(getStoriesInformation != null && getStoriesInformation.getStories() != null){
+                        storyInformations = (ArrayList<StoryInformation>)getStoriesInformation.getStories();
                         callback.onResult(storyInformations, null, 2);
                     }
                 }else{
@@ -58,14 +60,15 @@ public class StoryInformationDataSource extends PageKeyedDataSource<Integer, Sto
     @Override
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, StoryInformation> callback) {
         storyService = ApiUtils.getStoryService();
-        storyService.getStories(params.key, SettingsManager.SIZE_OF_PAGE, "", "", "").enqueue(new Callback<GetStoriesInformation>() {
+        storyService.getNewsStories(params.key, SettingsManager.SIZE_OF_PAGE).enqueue(new Callback<GetStoriesInformation>() {
             @Override
             public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
+                Log.d("Hung", "loadAfter");
                 List<StoryInformation> storyInformations = new ArrayList<>();
                 if(response.isSuccessful()){
                     GetStoriesInformation getStoriesInformation = response.body();
-                    if(getStoriesInformation != null && getStoriesInformation.getData() != null){
-                        storyInformations = (ArrayList<StoryInformation>)getStoriesInformation.getData();
+                    if(getStoriesInformation != null && getStoriesInformation.getStories() != null){
+                        storyInformations = (ArrayList<StoryInformation>)getStoriesInformation.getStories();
                         callback.onResult(storyInformations, params.key+1);
                     }
                 }else{

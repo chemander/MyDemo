@@ -3,12 +3,13 @@ package com.chemander.mydemo.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class ChapterInformation implements Serializable {
+public class ChapterDetail {
     @SerializedName("_id")
     @Expose
     private String id;
+    @SerializedName("chapterUrl")
+    @Expose
+    private String chapterUrl;
     @SerializedName("storyID")
     @Expose
     private String storyID;
@@ -18,9 +19,15 @@ public class ChapterInformation implements Serializable {
     @SerializedName("chapterName")
     @Expose
     private String chapterName;
+    @SerializedName("chapterContent")
+    @Expose
+    private String chapterContent;
     @SerializedName("chapterNum")
     @Expose
     private Integer chapterNum;
+    @SerializedName("chapterUpdated")
+    @Expose
+    private Integer chapterUpdated;
 
     public String getId() {
         return id;
@@ -28,6 +35,14 @@ public class ChapterInformation implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getChapterUrl() {
+        return chapterUrl;
+    }
+
+    public void setChapterUrl(String chapterUrl) {
+        this.chapterUrl = chapterUrl;
     }
 
     public String getStoryID() {
@@ -54,6 +69,14 @@ public class ChapterInformation implements Serializable {
         this.chapterName = chapterName;
     }
 
+    public String getChapterContent() {
+        return chapterContent;
+    }
+
+    public void setChapterContent(String chapterContent) {
+        this.chapterContent = chapterContent;
+    }
+
     public Integer getChapterNum() {
         return chapterNum;
     }
@@ -62,4 +85,11 @@ public class ChapterInformation implements Serializable {
         this.chapterNum = chapterNum;
     }
 
+    public Integer getChapterUpdated() {
+        return chapterUpdated;
+    }
+
+    public void setChapterUpdated(Integer chapterUpdated) {
+        this.chapterUpdated = chapterUpdated;
+    }
 }

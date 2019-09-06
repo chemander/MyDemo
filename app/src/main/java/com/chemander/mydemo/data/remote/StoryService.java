@@ -1,8 +1,10 @@
 package com.chemander.mydemo.data.remote;
 
+import com.chemander.mydemo.data.model.GetChapterInformation;
 import com.chemander.mydemo.data.model.GetChaptersInformation;
 import com.chemander.mydemo.data.model.GetHomeStoryInformation;
 import com.chemander.mydemo.data.model.GetStoriesInformation;
+import com.chemander.mydemo.data.model.GetStoryInformation;
 import com.chemander.mydemo.data.model.StoryInformation;
 
 import retrofit2.Call;
@@ -15,13 +17,13 @@ public interface StoryService {
     Call<GetStoriesInformation> getStories(@Query("page") int page, @Query("pagesize") int pagesize, @Query("storyName") String storyName, @Query("storyAuthor") String storyAuthor, @Query("storyGenre") String storyGenre);
 
     @GET("/api/stories/{storyid}")
-    Call<StoryInformation> getStoryDetail(@Path("storyid") String chapterid);
+    Call<GetStoryInformation> getStoryDetail(@Path("storyid") String chapterid);
 
     @GET("/api/chapters")
     Call<GetChaptersInformation> getChapters(@Query("storyid") String storyId, @Query("page") int page, @Query("pagesize") int pagesize);
 
     @GET("/api/chapters/{chapterid}")
-    Call<StoryInformation> getChapterDetail(@Path("chapterid") String chapterid);
+    Call<GetChapterInformation> getChapterDetail(@Path("chapterid") String chapterid);
 
     @GET("/api/stories/list_story_home")
     Call<GetHomeStoryInformation> getHomeStoryInformation();
@@ -34,4 +36,7 @@ public interface StoryService {
 
     @GET("/api/stories/list_story_finish")
     Call<GetStoriesInformation> getFinishStories(@Query("page") int page, @Query("pagesize") int pagesize);
+
+    @GET("/api/stories/search")
+    Call<GetStoriesInformation> getSearchListStories(@Query("page") int page, @Query("pagesize") int pagesize, @Query("query") String query);
 }

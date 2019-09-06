@@ -1,11 +1,14 @@
 package com.chemander.mydemo.information;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chemander.mydemo.R;
 import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.databinding.ItemStoryInformationDataBindBinding;
+import com.chemander.mydemo.utils.SettingsManager;
 
 public class StoryPagedListAdapter extends PagedListAdapter<StoryInformation, StoryPagedListAdapter.StoryViewHolder> {
     private Context context;
@@ -27,24 +31,37 @@ public class StoryPagedListAdapter extends PagedListAdapter<StoryInformation, St
     @Override
     public StoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemStoryInformationDataBindBinding itemStoryInformationDataBindBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_story_information_data_bind, parent, false);
-
         return new StoryViewHolder(itemStoryInformationDataBindBinding);
     }
 
 
     @Override
     public void onBindViewHolder(@NonNull StoryViewHolder holder, int position) {
+        if (holder instanceof StoryViewHolder) {
         StoryInformation storyInformation = getItem(position);
 //        storyInformation.setStoryImgUrl(storyInformation.getStoryImgUrl());
         holder.itemStoryInformationDataBindBinding.setStory(storyInformation);
+        holder.layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, StoryInformationActivity.class);
+                intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation.getId());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
+        }
     }
 
     public class StoryViewHolder extends RecyclerView.ViewHolder {
         ItemStoryInformationDataBindBinding itemStoryInformationDataBindBinding;
+        ConstraintLayout layout;
 
         public StoryViewHolder(@NonNull ItemStoryInformationDataBindBinding itemStoryInformationDataBindBinding) {
             super(itemStoryInformationDataBindBinding.getRoot());
             this.itemStoryInformationDataBindBinding = itemStoryInformationDataBindBinding;
+            View view = itemStoryInformationDataBindBinding.getRoot();
+            layout = view.findViewById(R.id.constraint_item_story);
         }
     }
 

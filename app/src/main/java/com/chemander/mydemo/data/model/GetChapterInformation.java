@@ -3,15 +3,14 @@ package com.chemander.mydemo.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+public class GetChapterInformation {
 
-public class GetChaptersInformation {
     @SerializedName("status")
     @Expose
     private Boolean status;
     @SerializedName("data")
     @Expose
-    private List<ChapterInformation> data = null;
+    private ChapterDetail data;
 
     public Boolean getStatus() {
         return status;
@@ -21,11 +20,12 @@ public class GetChaptersInformation {
         this.status = status;
     }
 
-    public List<ChapterInformation> getData() {
+    public ChapterDetail getChapterDetail() {
         return data;
     }
 
-    public void setData(List<ChapterInformation> data) {
+    public void setChapterDetail(ChapterDetail data) {
         this.data = data;
     }
+
 }

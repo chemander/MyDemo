@@ -9,6 +9,8 @@ import androidx.databinding.library.baseAdapters.BR;
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.chemander.mydemo.R;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -54,10 +56,17 @@ public class StoryInformation extends BaseObservable implements Serializable {
 
     @BindingAdapter({ "storyImgUrl" })
     public static void loadImage(ImageView imageView, String imageURL) {
+        RequestOptions ro = new RequestOptions();
+//
+//        ro.diskCacheStrategy(DiskCacheStrategy.NONE);
+//        ro.skipMemoryCache(true);
+//        ro.centerCrop();
 
         Glide.with(imageView.getContext())
+//                .applyDefaultRequestOptions(ro)
                 .load(imageURL)
                 .override(260,300)
+                .centerCrop()
                 .placeholder(R.drawable.ic_close)
                 .into(imageView);
     }

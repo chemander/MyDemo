@@ -1,6 +1,8 @@
 package com.chemander.mydemo.information;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,17 +19,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.chemander.mydemo.AdapterChapter;
 import com.chemander.mydemo.R;
-import com.chemander.mydemo.data.ReadJSON;
 import com.chemander.mydemo.data.model.ChapterInformation;
 import com.chemander.mydemo.data.model.GetChaptersInformation;
-import com.chemander.mydemo.data.model.GetStoriesInformation;
+import com.chemander.mydemo.data.model.GetStoryInformation;
 import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
-import com.chemander.mydemo.model.Chapter;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -35,6 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class StoryInformationActivity extends AppCompatActivity {
+    private String storyId;
     private StoryInformation storyInformation;
     public ImageView cover;
     public TextView title;
@@ -44,6 +46,7 @@ public class StoryInformationActivity extends AppCompatActivity {
     public TextView status;
     public TextView titleStoryBar;
     public ImageButton imageButtonBack;
+    CardView cardView;
 
     public RecyclerView recyclerView;
     private AdapterChapter adapterChapter;
@@ -62,12 +65,16 @@ public class StoryInformationActivity extends AppCompatActivity {
         author = (TextView) findViewById(R.id.textAuthor);
         status = (TextView) findViewById(R.id.textStatus);
         genre = (TextView) findViewById(R.id.textGenre);
-        recyclerView = (RecyclerView) findViewById(R.id.list_chapters);
+//        recyclerView = (RecyclerView) findViewById(R.id.list_chapters);
         imageButtonBack = (ImageButton) findViewById(R.id.bt_back);
+        cardView = (CardView)findViewById(R.id.card_view_show_list_chapter);
 
-        storyInformation = (StoryInformation) getIntent().getSerializableExtra(SettingsManager.STORY_INFORMATION);
+//        storyInformation = (StoryInformation) getIntent().getSerializableExtra(SettingsManager.STORY_INFORMATION);
+        storyId = getIntent().getStringExtra(SettingsManager.STORY_INFORMATION);
+        chapters = new ArrayList<>();
+
+        storyService = ApiUtils.getStoryService();
         initComponents();
-        setParameters();
     }
 
     @Override
@@ -77,27 +84,28 @@ public class StoryInformationActivity extends AppCompatActivity {
     }
 
     private void setParameters() {
-        Glide.with(this).load(storyInformation.getStoryImgUrl()).override(300,350).centerCrop().into(cover);
-        title.setText(storyInformation.getStoryName());
-        titleStoryBar.setText(storyInformation.getStoryName());
-        description.setText("Mô tả:"+ storyInformation.getStoryDescription());
-        author.setText("Tác giả: "+storyInformation.getStoryAuthor());
-        status.setText("Thể loại: "+storyInformation.getStoryGenre());
-        genre.setText("Trạng thái: "+storyInformation.getStoryStatus());
-        chapters = new ArrayList<>();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                linearLayoutManager.getOrientation());
-        LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(getApplication(), R.anim.layout_animation_fall_down);
-
-        recyclerView.setLayoutAnimation(controller);
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        adapterChapter = new AdapterChapter(getApplicationContext(), chapters);
-        recyclerView.setAdapter(adapterChapter);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
+        if(storyInformation != null) {
+            Glide.with(this).load(storyInformation.getStoryImgUrl()).override(300, 350).centerCrop().into(cover);
+            title.setText(storyInformation.getStoryName());
+            titleStoryBar.setText(storyInformation.getStoryName());
+            description.setText(storyInformation.getStoryDescription());
+            author.setText("Tác giả: " + storyInformation.getStoryAuthor());
+            status.setText("Thể loại: " + storyInformation.getStoryGenre());
+            genre.setText("Trạng thái: " + storyInformation.getStoryStatus());
+        }
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+//                linearLayoutManager.getOrientation());
+//        LayoutAnimationController controller =
+//                AnimationUtils.loadLayoutAnimation(getApplication(), R.anim.layout_animation_fall_down);
+//
+//        recyclerView.setLayoutAnimation(controller);
+//        recyclerView.addItemDecoration(dividerItemDecoration);
+//        adapterChapter = new AdapterChapter(getApplicationContext(), chapters);
+//        recyclerView.setAdapter(adapterChapter);
+//        recyclerView.getAdapter().notifyDataSetChanged();
+//        recyclerView.scheduleLayoutAnimation();
     }
 
     private void initComponents() {
@@ -109,7 +117,43 @@ public class StoryInformationActivity extends AppCompatActivity {
             }
         });
 
-        storyService = ApiUtils.getStoryService();
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                ListChaptersFragment listChaptersFragment = ListChaptersFragment.newInstance(storyInformation.getStoryID());
+                listChaptersFragment.show(fragmentManager, null);
+            }
+        });
+        getStoryInformation();
+    }
+
+    private void getStoryInformation(){
+
+        storyService.getStoryDetail(storyId).enqueue(new Callback<GetStoryInformation>() {
+            @Override
+            public void onResponse(Call<GetStoryInformation> call, Response<GetStoryInformation> response) {
+                if(response.isSuccessful()){
+                    storyInformation = response.body().getDataStoryInformation();
+                    setParameters();
+//                    getChapters();
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            adapterChapter.notifyDataSetChanged();
+//                        }
+//                    });
+                }else Log.d("Hung", "Total = "+response.code());
+            }
+
+            @Override
+            public void onFailure(Call<GetStoryInformation> call, Throwable t) {
+                Log.d("Hung", "Error = "+t.toString());
+            }
+        });
+    }
+
+    private void getChapters(){
         storyService.getChapters(storyInformation.getStoryID(), 1,2000).enqueue(new Callback<GetChaptersInformation>() {
             @Override
             public void onResponse(Call<GetChaptersInformation> call, Response<GetChaptersInformation> response) {

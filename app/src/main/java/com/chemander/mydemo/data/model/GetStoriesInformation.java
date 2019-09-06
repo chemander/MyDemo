@@ -6,44 +6,22 @@ import com.google.gson.annotations.SerializedName;
 
 public class GetStoriesInformation {
 
-    @SerializedName("page")
+    @SerializedName("status")
     @Expose
-    private Integer page;
-    @SerializedName("total_results")
-    @Expose
-    private Integer totalResults;
-    @SerializedName("total_pages")
-    @Expose
-    private Integer totalPages;
+    private Boolean status;
     @SerializedName("data")
     @Expose
     private List<StoryInformation> data = null;
 
-    public Integer getPage() {
-        return page;
+    public Boolean getStatus() {
+        return status;
     }
 
-    public void setPage(Integer page) {
-        this.page = page;
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
-    public Integer getTotalResults() {
-        return totalResults;
-    }
-
-    public void setTotalResults(Integer totalResults) {
-        this.totalResults = totalResults;
-    }
-
-    public Integer getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(Integer totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public List<StoryInformation> getData() {
+    public List<StoryInformation> getStories() {
         return data;
     }
 

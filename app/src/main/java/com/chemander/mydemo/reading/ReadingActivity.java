@@ -3,6 +3,7 @@ package com.chemander.mydemo.reading;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -29,12 +30,23 @@ import android.widget.Toast;
 
 import com.chemander.mydemo.R;
 import com.chemander.mydemo.data.ReadJSON;
+import com.chemander.mydemo.data.model.ChapterDetail;
+import com.chemander.mydemo.data.model.ChapterInformation;
+import com.chemander.mydemo.data.model.GetChapterInformation;
+import com.chemander.mydemo.data.model.GetChaptersInformation;
+import com.chemander.mydemo.data.remote.StoryService;
 import com.chemander.mydemo.model.Chapter;
+import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -49,7 +61,7 @@ public class ReadingActivity extends AppCompatActivity {
     private TextView textTemp2;
     private TextView textTemp3;
     private TextView textTemp4;
-    private List<Chapter> chapters;
+    private ArrayList<ChapterInformation> chapters;
     private Spinner spinner;
     private Spinner spinnerFontType;
     private ChapterSpinnerAdapter spinnerAdapter;
@@ -64,6 +76,10 @@ public class ReadingActivity extends AppCompatActivity {
     ScrollView scrollView;
     private View chapter_bar;
     private View chapter_select;
+    StoryService storyService;
+    String chapterId;
+    String storyId;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,13 +105,20 @@ public class ReadingActivity extends AppCompatActivity {
         buttonNext = (ImageButton)findViewById(R.id.bt_next);
         buttonBack = (ImageButton)findViewById(R.id.bt_back);
 
+
+        progressDialog = SettingsManager.showLoadingDialog(this);
         scrollView.setVerticalScrollBarEnabled(false);
         scrollView.setSmoothScrollingEnabled(true);
-        chapters = ReadJSON.readChapterFromJSONFile(this);
+        chapters = new ArrayList<>();
+        storyId = getIntent().getStringExtra(SettingsManager.CHAPTERS_INFORMATION);
+        chapterId = getIntent().getStringExtra(SettingsManager.CHAPTERS_ID);
         fontTypes = SettingsManager.getAsset(getApplicationContext());
 
         spinnerAdapter = new ChapterSpinnerAdapter(this, R.layout.item_home, R.id.title_chapter, chapters);
         spinner.setAdapter(spinnerAdapter);
+//        spinner.setIte
+        storyService = ApiUtils.getStoryService();
+        getChapters();
         initContent();
         setListener();
         animateChapterBar(true);
@@ -104,23 +127,25 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     public void nextChapter(){
-        int currentChapter = SettingsManager.preferenceCurrentChapter;
+        int currentChapter = spinner.getSelectedItemPosition();
         SettingsManager.preferenceCurrentPosition = 0;
         if(currentChapter == chapters.size()-1){
             return;
         }else{
-            SettingsManager.preferenceCurrentChapter++;
+            currentChapter++;
+            spinner.setSelection(currentChapter);
             initContent();
         }
     }
 
     public void previousChapter(){
-        int currentChapter = SettingsManager.preferenceCurrentChapter;
+        int currentChapter = spinner.getSelectedItemPosition();
         SettingsManager.preferenceCurrentPosition = 0;
         if(currentChapter == 0){
             return;
         }else{
-            SettingsManager.preferenceCurrentChapter--;
+            currentChapter--;
+            spinner.setSelection(currentChapter);
             initContent();
         }
     }
@@ -250,7 +275,7 @@ public class ReadingActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                SettingsManager.preferenceCurrentChapter = position;
+                chapterId = chapters.get(position).getId();
                 initContent();
             }
 
@@ -289,11 +314,12 @@ public class ReadingActivity extends AppCompatActivity {
         super.onAttachedToWindow();
     }
     private void initContent(){
-        mainContent.setText(chapters.get(SettingsManager.preferenceCurrentChapter).getContent());
+        progressDialog.show();
+        getChapterContent();
         setTextSize();
         setFontType();
         setColor();
-        spinner.setSelection(SettingsManager.preferenceCurrentChapter);
+
         scrollView.post(new Runnable() {
             @Override
             public void run() {
@@ -301,6 +327,7 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
     }
+    
     private void setTextSize(){
         mainContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsManager.preferenceFontSize);
     }
@@ -438,6 +465,71 @@ public class ReadingActivity extends AppCompatActivity {
         chapter_select.animate().translationY(moveYY).setStartDelay(100).setDuration(300).start();
     }
 
+    private int findInChapters(){
+        for(int i = 0; i < chapters.size(); i++){
+            if(chapterId.equals(chapters.get(i).getId())){
+                return i;
+            }
+        }
+        return 0;
+    }
+    private void getChapterContent(){
+        storyService.getChapterDetail(chapterId).enqueue(new Callback<GetChapterInformation>() {
+            @Override
+            public void onResponse(Call<GetChapterInformation> call, Response<GetChapterInformation> response) {
+                    if(response.isSuccessful()){
+                        ChapterDetail chapterDetail = response.body().getChapterDetail();
+                        mainContent.setText(chapterDetail.getChapterContent());
+                    }else{
+                        Toast.makeText(getApplication(), "Dữ liệu chương bị lỗi", Toast.LENGTH_SHORT).show();
+                    }
+                dissmiss();
+            }
 
+            @Override
+            public void onFailure(Call<GetChapterInformation> call, Throwable t) {
+                Toast.makeText(getApplication(), "Không lấy được nội dụng của chương", Toast.LENGTH_SHORT).show();
+                dissmiss();
+            }
+        });
+    }
 
+    private void getChapters(){
+        storyService.getChapters(storyId, 1,2000).enqueue(new Callback<GetChaptersInformation>() {
+            @Override
+            public void onResponse(Call<GetChaptersInformation> call, Response<GetChaptersInformation> response) {
+                if(response.isSuccessful()){
+                    chapters.addAll(response.body().getData());
+                    spinnerAdapter.notifyDataSetChanged();
+                    spinner.setSelection(findInChapters());
+                }else Log.d("Hung", "Total = "+response.code());
+
+                dissmiss();
+            }
+
+            @Override
+            public void onFailure(Call<GetChaptersInformation> call, Throwable t) {
+                dissmiss();
+//                chapters.addAll(ReadJSON.readStoryInformationsFromJSONFile(getApplicationContext()));
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        adapterStory.notifyDataSetChanged();
+//
+//                    }
+//                });
+            }
+        });
+    }
+
+    private void dissmiss(){
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+    }
 }

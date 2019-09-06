@@ -10,9 +10,7 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.chemander.mydemo.data.model.StoryInformation;
-import com.chemander.mydemo.data.model.StoryInformationDataSourceFactory;
-import com.chemander.mydemo.data.remote.StoryService;
-import com.chemander.mydemo.utils.ApiUtils;
+import com.chemander.mydemo.data.model.source.StoryInformationDataSourceFactory;
 import com.chemander.mydemo.utils.SettingsManager;
 
 import java.util.concurrent.Executor;
@@ -37,7 +35,6 @@ public class StoryInformationViewModel extends AndroidViewModel {
                 .setPageSize(SettingsManager.SIZE_OF_PAGE)
                 .build();
         executor = Executors.newFixedThreadPool(5);
-
         storyPagedList = (new LivePagedListBuilder<Integer, StoryInformation>(factory, config))
                 .setFetchExecutor(executor)
                 .build();

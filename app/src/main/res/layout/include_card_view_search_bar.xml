@@ -28,12 +28,12 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/bt_menu"
+                android:id="@+id/bt_search"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:tint="@android:color/black"
-                app:srcCompat="@drawable/ic_settings" />
+                app:srcCompat="@drawable/ic_search_black_24dp" />
 
             <TextView
                 android:id="@+id/search_text"
@@ -43,7 +43,7 @@
                 android:textColor="@android:color/black"
                 android:gravity="center_vertical"
                 android:textAlignment="center"
-                android:text="Tên truyện ở đây nhé :)))"
+                android:text="Tìm kiếm"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                  />
 

@@ -27,6 +27,7 @@ import com.chemander.mydemo.home.HomeFragment;
 import com.chemander.mydemo.information.StoryAdapter;
 import com.chemander.mydemo.model.Chapter;
 import com.chemander.mydemo.reading.ReadingActivity;
+import com.chemander.mydemo.search.SearchActivity;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -46,12 +47,15 @@ public class MainActivity extends AppCompatActivity {
     private List<StoryInformation> stories = new ArrayList<>();
     private View search_bar;
     private ImageButton buttonContinue;
+    private ImageButton buttonSearch;
     private BottomNavigationView bottomNavigationView;
     private TextView mTitle;
     private StoryService storyService;
     private HomeFragment homeFragment;
+
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +84,16 @@ public class MainActivity extends AppCompatActivity {
 //        chapters = ReadJSON.readChapterFromJSONFile(getApplicationContext());
 //        adapterChapter = new AdapterChapter(this, chapters);
         buttonContinue = (ImageButton)findViewById(R.id.bt_continue);
+        buttonSearch = (ImageButton)findViewById(R.id.bt_search);
 
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
 //        recyclerView.setAdapter(adapterChapter);
 
         NestedScrollView nested_content = (NestedScrollView) findViewById(R.id.nested_scroll_view);
@@ -117,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
                 if(response.isSuccessful()){
-                    stories.addAll(response.body().getData());
+                    stories.addAll(response.body().getStories());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

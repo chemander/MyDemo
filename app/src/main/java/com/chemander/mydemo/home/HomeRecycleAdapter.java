@@ -48,7 +48,7 @@ public class HomeRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             cover = (ImageView) view.findViewById(R.id.imageViewCover);
             title = (TextView) view.findViewById(R.id.textTitleStory);
 //            author = (TextView) view.findViewById(R.id.textAuthor);
-//            layout = (ConstraintLayout) view.findViewById(R.id.layout_constraint_story);
+            layout = (ConstraintLayout) view.findViewById(R.id.layout_constraint_story);
         }
     }
     @Override
@@ -67,17 +67,17 @@ public class HomeRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             Glide.with(context).load(storyInformation.getStoryImgUrl()).override(260,300).centerCrop().into(view.cover);
             view.title.setText(storyInformation.getStoryName());
 //            view.author.setText("Tác giả: "+storyInformation.getStoryAuthor());
-//            view.layout.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-////                    Bundle bundle = new Bundle();
-////                    bundle.putSerializable(SettingsManager.STORY_INFORMATION, storyInformation);
-//                    Intent intent = new Intent(context, StoryInformationActivity.class);
-//                    intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation);
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    context.startActivity(intent);
-//                }
-//            });
+            view.layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable(SettingsManager.STORY_INFORMATION, storyInformation);
+                    Intent intent = new Intent(context, StoryInformationActivity.class);
+                    intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation.getId());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 

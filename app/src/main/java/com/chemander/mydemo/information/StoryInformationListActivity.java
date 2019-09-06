@@ -1,7 +1,6 @@
 package com.chemander.mydemo.information;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -20,7 +19,6 @@ import com.chemander.mydemo.data.model.GetStoriesInformation;
 import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
 import com.chemander.mydemo.data.viewmodel.StoryInformationViewModel;
-import com.chemander.mydemo.data.viewmodel.StoryInformationViewModelFactory;
 import com.chemander.mydemo.databinding.ActivityStoryInformationListBinding;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
@@ -114,7 +112,7 @@ public class StoryInformationListActivity extends AppCompatActivity implements L
                 @Override
                 public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
                     if(response.isSuccessful()){
-                        storyInformationList.addAll(response.body().getData());
+                        storyInformationList.addAll(response.body().getStories());
                         storyAdapter.notifyDataSetChanged();
                     }
                 }
@@ -131,7 +129,7 @@ public class StoryInformationListActivity extends AppCompatActivity implements L
                 @Override
                 public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
                     if(response.isSuccessful()){
-                        storyInformationList.addAll(response.body().getData());
+                        storyInformationList.addAll(response.body().getStories());
                         storyAdapter.notifyDataSetChanged();
                     }
                 }
@@ -148,7 +146,7 @@ public class StoryInformationListActivity extends AppCompatActivity implements L
                 @Override
                 public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
                     if(response.isSuccessful()){
-                        storyInformationList.addAll(response.body().getData());
+                        storyInformationList.addAll(response.body().getStories());
                         storyAdapter.notifyDataSetChanged();
                     }
                 }

@@ -1,5 +1,6 @@
 package com.chemander.mydemo.home;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -45,7 +46,7 @@ public class HomeFragment extends Fragment {
     private ImageButton fullButton;
     private HomeRecycleAdapter fullAdapter;
     private List<StoryInformation> fullList;
-
+    private ProgressDialog progressDialog;
 
     private StoryService storyService;
 
@@ -54,6 +55,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.home_fragment, container, false);
 //        setRetainInstance(true);
+        progressDialog = SettingsManager.showLoadingDialog(getActivity());
+        progressDialog.show();
         //Setup news list
         newsRecyclerView = (RecyclerView)mainView.findViewById(R.id.recycler_news);
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -122,13 +125,16 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<GetHomeStoryInformation> call, Throwable t) {
-
+                if(progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
             }
         });
     }
 
     public void openListStoryActivity(int type){
         Intent intent = new Intent(getContext(), StoryInformationListActivity.class);
+        SettingsManager.typeOfListStoryInformation = type;
         intent.putExtra(SettingsManager.TITLE_STORY_LIST, type);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
@@ -140,6 +146,9 @@ public class HomeFragment extends Fragment {
                 newsAdapter.notifyDataSetChanged();
                 hotAdapter.notifyDataSetChanged();
                 fullAdapter.notifyDataSetChanged();
+                if(progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
             }
         });
     }
