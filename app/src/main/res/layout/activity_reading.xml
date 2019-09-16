@@ -12,28 +12,64 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:fillViewport="true"
+        >
         <ScrollView
             android:id="@+id/scrollReading"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
-            android:fillViewport="true">
-        <TextView
-            android:layout_width="match_parent"
+            android:background="@color/grey_20"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_margin="10dp"
+                    android:id="@+id/reading_story_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tên truyện"
+                    android:gravity="center"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:id="@+id/reading_chapter_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tên chương"
+                    android:gravity="center"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:textSize="20sp"
+                    />
+
+                <include
+                    layout="@layout/include_reading_action_menu" />
+
+            <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:paddingTop="30dp"
-            android:paddingBottom="2000dp"
             android:id="@+id/textviewMainContent"
             />
+                <include
+                    layout="@layout/include_reading_action_menu" />
+            </LinearLayout>
         </ScrollView>
     </LinearLayout>
     <include
         android:id="@+id/chapter_bar"
+        android:visibility="invisible"
         layout="@layout/include_chapter_bar" />
     <include
         android:id="@+id/chapter_select"
+        android:visibility="invisible"
         layout="@layout/include_chapter_select" />
     <!--bottom sheet container-->
 

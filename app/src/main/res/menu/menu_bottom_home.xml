@@ -3,22 +3,22 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/ic_home"
         android:title="Trang chủ" />
 
     <item
         android:id="@+id/navigation_library"
-        android:icon="@drawable/ic_library_books"
+        android:icon="@drawable/ic_categories_3"
         android:title="Thư viện" />
 
     <item
         android:id="@+id/navigation_Download"
-        android:icon="@drawable/ic_file_download"
+        android:icon="@drawable/ic_download_ebook"
         android:title="Tải về" />
 
     <item
         android:id="@+id/navigation_account"
-        android:icon="@drawable/ic_account_circle"
+        android:icon="@drawable/ic_user"
         android:title="Đã đọc" />
 
 </menu>

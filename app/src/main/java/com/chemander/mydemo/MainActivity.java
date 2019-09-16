@@ -12,38 +12,28 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.chemander.mydemo.data.model.GetStoriesInformation;
 import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
 import com.chemander.mydemo.home.HomeFragment;
 import com.chemander.mydemo.information.StoryAdapter;
-import com.chemander.mydemo.model.Chapter;
+import com.chemander.mydemo.reading.AdapterChapter;
 import com.chemander.mydemo.reading.ReadingActivity;
 import com.chemander.mydemo.search.SearchActivity;
-import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdapterChapter adapterChapter;
     private StoryAdapter storyAdapter;
-    private List<Chapter> chapters;
     private List<StoryInformation> stories = new ArrayList<>();
     private View search_bar;
     private ImageButton buttonContinue;
@@ -86,14 +76,6 @@ public class MainActivity extends AppCompatActivity {
         buttonContinue = (ImageButton)findViewById(R.id.bt_continue);
         buttonSearch = (ImageButton)findViewById(R.id.bt_search);
 
-        buttonSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
 //        recyclerView.setAdapter(adapterChapter);
 
         NestedScrollView nested_content = (NestedScrollView) findViewById(R.id.nested_scroll_view);
@@ -111,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        initComponent();
+        initComponent();
     }
 
 
@@ -125,27 +107,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        storyService = ApiUtils.getStoryService();
-        storyService.getStories(1, 20, "", "", "").enqueue(new Callback<GetStoriesInformation>() {
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
-                if(response.isSuccessful()){
-                    stories.addAll(response.body().getStories());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            storyAdapter.notifyDataSetChanged();
-
-                        }
-                    });
-                }else Log.d("Hung", "Total = "+response.code());
-            }
-
-            @Override
-            public void onFailure(Call<GetStoriesInformation> call, Throwable t) {
-                Log.d("Hung", "Error = "+t.toString());
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
+
+        mTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+//        storyService = ApiUtils.getStoryService();
+//        storyService.getStories(1, 20, "", "", "").enqueue(new Callback<GetStoriesInformation>() {
+//            @Override
+//            public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
+//                if(response.isSuccessful()){
+//                    stories.addAll(response.body().getStories());
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            storyAdapter.notifyDataSetChanged();
+//
+//                        }
+//                    });
+//                }else Log.d("Hung", "Total = "+response.code());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<GetStoriesInformation> call, Throwable t) {
+//                Log.d("Hung", "Error = "+t.toString());
+//            }
+//        });
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -173,12 +172,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(getApplication(), R.anim.layout_animation_fall_down);
-
-        recyclerView.setLayoutAnimation(controller);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
+//        LayoutAnimationController controller =
+//                AnimationUtils.loadLayoutAnimation(getApplication(), R.anim.layout_animation_fall_down);
+//
+//        recyclerView.setLayoutAnimation(controller);
+//        recyclerView.getAdapter().notifyDataSetChanged();
+//        recyclerView.scheduleLayoutAnimation();
     }
 
     boolean isSearchBarHide = false;

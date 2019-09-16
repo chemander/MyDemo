@@ -61,7 +61,7 @@ public class StoryInformationDataSourceFactory extends DataSource.Factory {
             case SettingsManager.SEARCH_STORY_LIST:
                 searchListDataSource = new SearchListDataSource();
                 mutableLiveDataSearchList.postValue(searchListDataSource);
-                return storyInformationFinishListDataSource;
+                return searchListDataSource;
             default: storyInformationDataSource = new StoryInformationDataSource();
                 mutableLiveData.postValue(storyInformationDataSource);
                 return storyInformationDataSource;

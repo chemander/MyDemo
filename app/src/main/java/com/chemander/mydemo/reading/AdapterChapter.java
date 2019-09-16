@@ -1,4 +1,4 @@
-package com.chemander.mydemo;
+package com.chemander.mydemo.reading;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chemander.mydemo.R;
 import com.chemander.mydemo.data.model.ChapterInformation;
 import com.chemander.mydemo.reading.ReadingActivity;
 import com.chemander.mydemo.utils.SettingsManager;

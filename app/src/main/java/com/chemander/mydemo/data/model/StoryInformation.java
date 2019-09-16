@@ -2,21 +2,27 @@ package com.chemander.mydemo.data.model;
 
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.chemander.mydemo.R;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
+@Entity(tableName = "recent")
 public class StoryInformation extends BaseObservable implements Serializable {
 
     @SerializedName("storyCountView")
@@ -24,34 +30,63 @@ public class StoryInformation extends BaseObservable implements Serializable {
     private Integer storyCountView;
     @SerializedName("_id")
     @Expose
+    @NonNull
+    @PrimaryKey
+    @ColumnInfo(name = "_id")
     private String id;
     @SerializedName("storyURL")
+    @ColumnInfo(name = "storyURL")
     @Expose
     private String storyURL;
     @SerializedName("storyID")
+    @ColumnInfo(name = "storyID")
     @Expose
     private String storyID;
     @SerializedName("storyImgUrl")
+    @ColumnInfo(name = "storyImgUrl")
     @Expose
     private String storyImgUrl;
     @SerializedName("storyName")
+    @ColumnInfo(name = "storyName")
     @Expose
     private String storyName;
     @SerializedName("storyDescription")
+    @ColumnInfo(name = "storyDescription")
     @Expose
     private String storyDescription;
     @SerializedName("storyAuthor")
+    @ColumnInfo(name = "storyAuthor")
     @Expose
     private String storyAuthor;
     @SerializedName("storyGenre")
+    @ColumnInfo(name = "storyGenre")
     @Expose
     private String storyGenre;
     @SerializedName("storyStatus")
+    @Ignore
+//    @ColumnInfo(name = "storyStatus")
     @Expose
     private Object storyStatus;
     @SerializedName("storyUpdated")
+    @ColumnInfo(name = "storyUpdated")
     @Expose
     private Integer storyUpdated;
+
+    @ColumnInfo(name = "recentChapterId")
+    private String recentChapterId = "";
+    @ColumnInfo(name = "recentPosition")
+    private int recentPosition = 0;
+    @ColumnInfo(name = "isDownload")
+    private boolean isDownload = false;
+    @ColumnInfo(name = "isFavorite")
+    private boolean isFavorite = false;
+    @ColumnInfo(name = "recentTime")
+    private long recentTime = 0;
+    @ColumnInfo(name = "downloadTime")
+    private long downloadTime = 0;
+    @ColumnInfo(name = "favoriteTime")
+    private long favoriteTime = 0;
+
 
 
     @BindingAdapter({ "storyImgUrl" })
@@ -65,8 +100,8 @@ public class StoryInformation extends BaseObservable implements Serializable {
         Glide.with(imageView.getContext())
 //                .applyDefaultRequestOptions(ro)
                 .load(imageURL)
-                .override(260,300)
-                .centerCrop()
+//                .override(260,300)
+//                .centerCrop()
                 .placeholder(R.drawable.ic_close)
                 .into(imageView);
     }
@@ -143,7 +178,7 @@ public class StoryInformation extends BaseObservable implements Serializable {
 
     @Bindable
     public String getStoryAuthor() {
-        return storyAuthor;
+        return "Tác giả: "+storyAuthor;
     }
 
     public void setStoryAuthor(String storyAuthor) {
@@ -153,7 +188,7 @@ public class StoryInformation extends BaseObservable implements Serializable {
 
     @Bindable
     public String getStoryGenre() {
-        return storyGenre;
+        return "Thể loại: "+storyGenre;
     }
 
     public void setStoryGenre(String storyGenre) {
@@ -163,7 +198,9 @@ public class StoryInformation extends BaseObservable implements Serializable {
 
     @Bindable
     public Object getStoryStatus() {
-        return storyStatus;
+        if(storyStatus == null)
+            return "Trạng thái: Đang cập nhật";
+        return "Trạng thái: "+ storyStatus;
     }
 
     public void setStoryStatus(Object storyStatus) {
@@ -179,6 +216,65 @@ public class StoryInformation extends BaseObservable implements Serializable {
     public void setStoryUpdated(Integer storyUpdated) {
         this.storyUpdated = storyUpdated;
         notifyPropertyChanged(BR.storyUpdated);
+    }
+
+    public String getRecentChapterId() {
+        return recentChapterId;
+    }
+
+    public void setRecentChapterId(String recentChapterId) {
+        this.recentChapterId = recentChapterId;
+    }
+
+    public int getRecentPosition() {
+        return recentPosition;
+    }
+
+    public void setRecentPosition(int recentPosition) {
+        this.recentPosition = recentPosition;
+        setRecentTime(Calendar.getInstance().getTimeInMillis());
+    }
+
+    public boolean isDownload() {
+        return isDownload;
+    }
+
+    public void setDownload(boolean download) {
+        isDownload = download;
+        setDownloadTime(Calendar.getInstance().getTimeInMillis());
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+        setFavoriteTime(Calendar.getInstance().getTimeInMillis());
+    }
+
+    public long getRecentTime() {
+        return recentTime;
+    }
+
+    public void setRecentTime(long recentTime) {
+        this.recentTime = recentTime;
+    }
+
+    public long getDownloadTime() {
+        return downloadTime;
+    }
+
+    public void setDownloadTime(long downloadTime) {
+        this.downloadTime = downloadTime;
+    }
+
+    public long getFavoriteTime() {
+        return favoriteTime;
+    }
+
+    public void setFavoriteTime(long favoriteTime) {
+        this.favoriteTime = favoriteTime;
     }
 
     public static final DiffUtil.ItemCallback<StoryInformation> CALLBACK = new DiffUtil.ItemCallback<StoryInformation>() {

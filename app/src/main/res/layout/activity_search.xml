@@ -20,47 +20,11 @@
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <View
+                    android:id="@+id/tempView"
+                    android:background="@android:color/white"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_gravity="center"
-                    >
-
-                    <View
-                        android:id="@+id/divider2"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@android:color/black"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/image_button_back"/>
-
-                    <ImageButton
-                        android:layout_marginLeft="5dp"
-                        android:id="@+id/image_button_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_back"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        />
-
-                    <SearchView
-                        android:id="@+id/search_view_chapters"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:iconifiedByDefault="false"
-                        android:queryHint="Tìm kiếm chương truyện"
-                        android:searchHintIcon="@null"
-                        android:searchIcon="@null"
-                        app:queryBackground="@android:color/transparent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/image_button_back"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/image_button_back"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_height="?attr/actionBarSize" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
@@ -72,6 +36,9 @@
 
 
         </LinearLayout>
+        <include
+            android:id="@+id/search_bar"
+            layout="@layout/include_search_bar" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

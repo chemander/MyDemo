@@ -3,32 +3,30 @@ package com.chemander.mydemo.information;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.chemander.mydemo.AdapterChapter;
+import com.chemander.mydemo.reading.AdapterChapter;
 import com.chemander.mydemo.R;
 import com.chemander.mydemo.data.model.ChapterInformation;
 import com.chemander.mydemo.data.model.GetChaptersInformation;
 import com.chemander.mydemo.data.model.GetStoryInformation;
 import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
+import com.chemander.mydemo.reading.ChaptersActivity;
+import com.chemander.mydemo.reading.ListChaptersFragment;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -88,10 +86,12 @@ public class StoryInformationActivity extends AppCompatActivity {
             Glide.with(this).load(storyInformation.getStoryImgUrl()).override(300, 350).centerCrop().into(cover);
             title.setText(storyInformation.getStoryName());
             titleStoryBar.setText(storyInformation.getStoryName());
-            description.setText(storyInformation.getStoryDescription());
-            author.setText("Tác giả: " + storyInformation.getStoryAuthor());
-            status.setText("Thể loại: " + storyInformation.getStoryGenre());
-            genre.setText("Trạng thái: " + storyInformation.getStoryStatus());
+            String descriptionContent = storyInformation.getStoryDescription();
+            descriptionContent = descriptionContent.replace("\n", "\n\n"+"    ");
+            description.setText("   "+descriptionContent);
+            author.setText(storyInformation.getStoryAuthor());
+            status.setText(storyInformation.getStoryGenre());
+            genre.setText(storyInformation.getStoryStatus().toString());
         }
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 //        recyclerView.setLayoutManager(linearLayoutManager);
@@ -120,9 +120,13 @@ public class StoryInformationActivity extends AppCompatActivity {
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                ListChaptersFragment listChaptersFragment = ListChaptersFragment.newInstance(storyInformation.getStoryID());
-                listChaptersFragment.show(fragmentManager, null);
+//                FragmentManager fragmentManager = getSupportFragmentManager();
+//                ListChaptersFragment listChaptersFragment = ListChaptersFragment.newInstance(storyInformation);
+//                listChaptersFragment.show(fragmentManager, null);
+                Intent intent = new Intent(getApplicationContext(), ChaptersActivity.class);
+                intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
         getStoryInformation();

@@ -1,4 +1,4 @@
-package com.chemander.mydemo.information;
+package com.chemander.mydemo.reading;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,24 +11,25 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.SearchView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chemander.mydemo.AdapterChapter;
 import com.chemander.mydemo.R;
+import com.chemander.mydemo.data.database.AppDatabase;
 import com.chemander.mydemo.data.model.ChapterInformation;
 import com.chemander.mydemo.data.model.GetChaptersInformation;
+import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
-import com.chemander.mydemo.reading.ReadingActivity;
+import com.chemander.mydemo.data.viewmodel.ChapterViewModel;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 
@@ -39,7 +40,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ListChaptersFragment extends DialogFragment {
+public class ListChaptersFragment extends Fragment {
     ArrayList<ChapterInformation> chapters;
     StoryService storyService;
     String storyId;
@@ -47,13 +48,16 @@ public class ListChaptersFragment extends DialogFragment {
     RecyclerView recyclerView;
     SearchView searchView;
     ImageButton buttonBack;
+    StoryInformation storyInformation;
+    ChapterViewModel chapterViewModel;
     final static String ID_OF_STORY = "storyId";
 
-    public static ListChaptersFragment newInstance(String data) {
+    public static ListChaptersFragment newInstance(StoryInformation data) {
         ListChaptersFragment dialog = new ListChaptersFragment();
         Bundle args = new Bundle();
-        args.putString(ID_OF_STORY, data);
+        args.putSerializable(ID_OF_STORY, data);
         dialog.setArguments(args);
+        Log.d("Hung", "storyid"+data.getStoryID());
         return dialog;
     }
 
@@ -62,26 +66,29 @@ public class ListChaptersFragment extends DialogFragment {
                              Bundle savedInstanceState) {
 //        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_DialogWhenLarge_NoActionBar);
 //        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+//        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
 //        getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        return inflater.inflate(R.layout.list_chapter_fragment, container);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        View view = inflater.inflate(R.layout.list_chapter_fragment, container,false);
         recyclerView = (RecyclerView) view.findViewById(R.id.list_chapters);
         buttonBack = (ImageButton) view.findViewById(R.id.image_button_back);
         searchView = (SearchView) view.findViewById(R.id.search_view_chapters);
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 //        searchView.setQueryHint("Tìm kiếm chương truyện");
-        storyId = getArguments().getString(ID_OF_STORY, "");
+        storyInformation = (StoryInformation)getArguments().getSerializable(ID_OF_STORY);
+        storyId = storyInformation.getStoryID();
         storyService = ApiUtils.getStoryService();
         chapters = new ArrayList<>();
         adapterChapter = new AdapterChapter(getContext(), chapters);
+        chapterViewModel = ViewModelProviders.of(getActivity()).get(ChapterViewModel.class);
 //        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         setComponents();
         getChapters();
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     void setComponents(){
@@ -102,7 +109,7 @@ public class ListChaptersFragment extends DialogFragment {
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getDialog().dismiss();
+                getActivity().onBackPressed();
             }
         });
 
@@ -132,13 +139,18 @@ public class ListChaptersFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
 //                Toast.makeText(getContext(), "-position-"+chapters.get(recyclerView.indexOfChild(view)).getId()+"-title"+adapterChapter.getChapterId(recyclerView.indexOfChild(view)),Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(getContext(), ReadingActivity.class);
                 intent.putExtra(SettingsManager.CHAPTERS_INFORMATION, storyId);
                 //adapterChapter.getChapterId(recyclerView.indexOfChild(view)) = id of current position
-                intent.putExtra(SettingsManager.CHAPTERS_ID, adapterChapter.getChapterId(recyclerView.indexOfChild(view)));
+                String chapterId = adapterChapter.getChapterId(recyclerView.indexOfChild(view));
+                storyInformation.setRecentChapterId(chapterId);
+                AppDatabase appDatabase = AppDatabase.getAppDatabase(getContext());
+                appDatabase.recentDao().insertStoryInformation(storyInformation);
+                intent.putExtra(SettingsManager.CHAPTERS_ID, chapterId);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getContext().startActivity(intent);
+//                getDialog().dismiss();
+                onDestroy();
             }
         });
     }

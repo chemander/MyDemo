@@ -52,6 +52,7 @@
                 android:text="Title of story"
                 android:textAlignment="center"
                 android:textStyle="bold"
+                android:textColor="@color/grey_90"
                 app:autoSizeTextType="uniform"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="parent"

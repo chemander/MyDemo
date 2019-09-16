@@ -2,22 +2,23 @@ package com.chemander.mydemo.reading;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,20 +30,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chemander.mydemo.R;
-import com.chemander.mydemo.data.ReadJSON;
+import com.chemander.mydemo.data.database.AppDatabase;
 import com.chemander.mydemo.data.model.ChapterDetail;
 import com.chemander.mydemo.data.model.ChapterInformation;
 import com.chemander.mydemo.data.model.GetChapterInformation;
 import com.chemander.mydemo.data.model.GetChaptersInformation;
+import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
-import com.chemander.mydemo.model.Chapter;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,13 +61,18 @@ public class ReadingActivity extends AppCompatActivity {
     private TextView textTemp2;
     private TextView textTemp3;
     private TextView textTemp4;
+    private TextView txtStoryTitle;
+    private TextView txtChapterTitle;
     private ArrayList<ChapterInformation> chapters;
     private Spinner spinner;
     private Spinner spinnerFontType;
+    private CardView cardViewPrevious;
+    private CardView cardViewNext;
     private ChapterSpinnerAdapter spinnerAdapter;
     private ImageButton buttonSettings;
     private ImageButton buttonPrevious;
     private ImageButton buttonNext;
+    private ImageButton buttonFavorite;
     private ImageButton buttonIncrease;
     private ImageButton buttonDecrease;
     private ImageButton buttonBack;
@@ -84,24 +89,26 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         setContentView(R.layout.activity_reading);
         bottom_sheet = findViewById(R.id.bottom_sheet);
         mBehavior = BottomSheetBehavior.from(bottom_sheet);
         mainContent = (TextView) findViewById(R.id.textviewMainContent);
-        textTemp1 = (TextView) findViewById(R.id.textViewTemp1);
-        textTemp2 = (TextView) findViewById(R.id.textViewTemp2);
-        textTemp3 = (TextView) findViewById(R.id.textViewTemp3);
-        textTemp4 = (TextView) findViewById(R.id.textViewTemp4);
-
+        txtStoryTitle = (TextView) findViewById(R.id.reading_story_title);
+        txtChapterTitle = (TextView) findViewById(R.id.reading_chapter_title);
 
         chapter_bar = (View) findViewById(R.id.chapter_bar);
         chapter_select = (View) findViewById(R.id.chapter_select);
         spinner = (Spinner) findViewById(R.id.spinner_chapter);
         scrollView = (ScrollView) findViewById(R.id.scrollReading);
+        cardViewNext = (CardView)findViewById(R.id.card_view_next);
+        cardViewPrevious = (CardView) findViewById(R.id.card_view_previous);
 
         buttonSettings = (ImageButton)findViewById(R.id.bt_settings);
-        buttonPrevious = (ImageButton)findViewById(R.id.bt_previous);
+        buttonPrevious = (ImageButton)chapter_select.findViewById(R.id.bt_previous);
+        buttonFavorite = (ImageButton)chapter_select.findViewById(R.id.bt_favorite);
         buttonNext = (ImageButton)findViewById(R.id.bt_next);
         buttonBack = (ImageButton)findViewById(R.id.bt_back);
 
@@ -111,6 +118,9 @@ public class ReadingActivity extends AppCompatActivity {
         scrollView.setSmoothScrollingEnabled(true);
         chapters = new ArrayList<>();
         storyId = getIntent().getStringExtra(SettingsManager.CHAPTERS_INFORMATION);
+        AppDatabase appDatabase = AppDatabase.getAppDatabase(this);
+        StoryInformation storyInformation = appDatabase.recentDao().findRecent(storyId);
+        txtStoryTitle.setText(storyInformation.getStoryName());
         chapterId = getIntent().getStringExtra(SettingsManager.CHAPTERS_ID);
         fontTypes = SettingsManager.getAsset(getApplicationContext());
 
@@ -121,9 +131,19 @@ public class ReadingActivity extends AppCompatActivity {
         getChapters();
         initContent();
         setListener();
-        animateChapterBar(true);
-        chapter_bar.setVisibility(View.INVISIBLE);
-        chapter_select.setVisibility(View.INVISIBLE);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                // Actions to do after 10 seconds
+                animateChapterBar(true);
+            }
+        }, 200);
+//        animateChapterBar(false);
+//        chapter_bar.setVisibility(View.INVISIBLE);
+//        chapter_select.setVisibility(View.INVISIBLE);
+
+//        View decorView = getWindow().getDecorView();
+//        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
     public void nextChapter(){
@@ -160,41 +180,6 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
-        textTemp1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SettingsManager.preferenceBackgroundColor = "#FF424242";
-                SettingsManager.preferenceTextColor = "#FFFFFFFF";
-                setColor();
-            }
-        });
-
-        textTemp2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SettingsManager.preferenceBackgroundColor = "#cccccc";
-                SettingsManager.preferenceTextColor = "#FF424242";
-                setColor();
-            }
-        });
-
-        textTemp3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SettingsManager.preferenceBackgroundColor = "#e0d8c3";
-                SettingsManager.preferenceTextColor = "#6a665b";
-                setColor();
-            }
-        });
-
-        textTemp4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SettingsManager.preferenceBackgroundColor = "#FAF7F7";
-                SettingsManager.preferenceTextColor = "#000000";
-                setColor();
-            }
-        });
         scrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -243,11 +228,7 @@ public class ReadingActivity extends AppCompatActivity {
         mainContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isChapterBarHide) {
-                    animateChapterBar(false);
-                }else {
-                    animateChapterBar(true);
-                }
+                onClickMainContent();
             }
         });
 
@@ -258,6 +239,7 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
+
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -265,6 +247,12 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
+        cardViewNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nextChapter();
+            }
+        });
         buttonPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -272,6 +260,19 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
+        cardViewPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                previousChapter();
+            }
+        });
+
+        buttonFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickOnFavorite();
+            }
+        });
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
@@ -284,6 +285,31 @@ public class ReadingActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private boolean isStoryFavorite = false;
+    private void clickOnFavorite() {
+        if(isStoryFavorite){
+            isStoryFavorite = false;
+            buttonFavorite.setImageResource(R.drawable.ic_unfavorite);
+        }else {
+            isStoryFavorite = true;
+            buttonFavorite.setImageResource(R.drawable.ic_favorite);
+        }
+    }
+
+    private void onClickMainContent() {
+        if(isChapterBarHide) {
+            animateChapterBar(false);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if(mBottomSheetDialog !=null)
+                mBottomSheetDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }else {
+            animateChapterBar(true);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if(mBottomSheetDialog !=null)
+                mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 
     @Override
@@ -306,7 +332,7 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     public void setColor(){
-        mainContent.setBackgroundColor(Color.parseColor(SettingsManager.preferenceBackgroundColor));
+        scrollView.setBackgroundColor(Color.parseColor(SettingsManager.preferenceBackgroundColor));
         mainContent.setTextColor(Color.parseColor(SettingsManager.preferenceTextColor));
     }
     @Override
@@ -320,12 +346,6 @@ public class ReadingActivity extends AppCompatActivity {
         setFontType();
         setColor();
 
-        scrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                scrollView.scrollTo(0,SettingsManager.preferenceCurrentPosition);
-            }
-        });
     }
     
     private void setTextSize(){
@@ -409,6 +429,47 @@ public class ReadingActivity extends AppCompatActivity {
         buttonIncrease = (ImageButton)view.findViewById(R.id.buttonIncrease);
         buttonDecrease = (ImageButton)view.findViewById(R.id.buttonDecrease);
 
+        textTemp1 = (TextView) view.findViewById(R.id.textViewTemp1);
+        textTemp2 = (TextView) view.findViewById(R.id.textViewTemp2);
+        textTemp3 = (TextView) view.findViewById(R.id.textViewTemp3);
+        textTemp4 = (TextView) view.findViewById(R.id.textViewTemp4);
+
+        textTemp1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingsManager.preferenceBackgroundColor = "#FF424242";
+                SettingsManager.preferenceTextColor = "#FFFFFFFF";
+                setColor();
+            }
+        });
+
+        textTemp2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingsManager.preferenceBackgroundColor = "#cccccc";
+                SettingsManager.preferenceTextColor = "#FF424242";
+                setColor();
+            }
+        });
+
+        textTemp3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingsManager.preferenceBackgroundColor = "#e0d8c3";
+                SettingsManager.preferenceTextColor = "#6a665b";
+                setColor();
+            }
+        });
+
+        textTemp4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingsManager.preferenceBackgroundColor = "#FAF7F7";
+                SettingsManager.preferenceTextColor = "#000000";
+                setColor();
+            }
+        });
+
         editFontSize = (EditText)view.findViewById(R.id.editTextSize);
         spinnerFontType  = (Spinner) view.findViewById(R.id.spinnerFontType);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, fontTypes);
@@ -421,7 +482,8 @@ public class ReadingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mBottomSheetDialog.hide();
-                animateChapterBar(true);
+//                mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                onClickMainContent();
             }
         });
 
@@ -432,6 +494,7 @@ public class ReadingActivity extends AppCompatActivity {
 //            }
 //        });
 
+        if(mBottomSheetDialog == null)
         mBottomSheetDialog = new BottomSheetDialog(this);
         mBottomSheetDialog.setContentView(view);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -440,13 +503,12 @@ public class ReadingActivity extends AppCompatActivity {
 
         // set background transparent
         ((View) view.getParent()).setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
         mBottomSheetDialog.show();
         mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                mBottomSheetDialog = null;
-                animateChapterBar(true);
+//                mBottomSheetDialog = null;
+                onClickMainContent();
             }
         });
 
@@ -479,17 +541,26 @@ public class ReadingActivity extends AppCompatActivity {
             public void onResponse(Call<GetChapterInformation> call, Response<GetChapterInformation> response) {
                     if(response.isSuccessful()){
                         ChapterDetail chapterDetail = response.body().getChapterDetail();
-                        mainContent.setText(chapterDetail.getChapterContent());
+                        txtChapterTitle.setText("Chương "+chapterDetail.getChapterName());
+                        String content = chapterDetail.getChapterContent();
+                        content = content.replace("\n", "\n\n"+"    ");
+                        mainContent.setText("   "+content);
+                        scrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollView.scrollTo(0,SettingsManager.preferenceCurrentPosition);
+                            }
+                        });
                     }else{
                         Toast.makeText(getApplication(), "Dữ liệu chương bị lỗi", Toast.LENGTH_SHORT).show();
                     }
-                dissmiss();
+                dismiss();
             }
 
             @Override
             public void onFailure(Call<GetChapterInformation> call, Throwable t) {
                 Toast.makeText(getApplication(), "Không lấy được nội dụng của chương", Toast.LENGTH_SHORT).show();
-                dissmiss();
+                dismiss();
             }
         });
     }
@@ -504,12 +575,12 @@ public class ReadingActivity extends AppCompatActivity {
                     spinner.setSelection(findInChapters());
                 }else Log.d("Hung", "Total = "+response.code());
 
-                dissmiss();
+                dismiss();
             }
 
             @Override
             public void onFailure(Call<GetChaptersInformation> call, Throwable t) {
-                dissmiss();
+                dismiss();
 //                chapters.addAll(ReadJSON.readStoryInformationsFromJSONFile(getApplicationContext()));
 //                runOnUiThread(new Runnable() {
 //                    @Override
@@ -522,14 +593,14 @@ public class ReadingActivity extends AppCompatActivity {
         });
     }
 
-    private void dissmiss(){
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if(progressDialog.isShowing()){
-            progressDialog.dismiss();
-        }
+    private void dismiss(){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if(progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
+            }
+        }, 500);
     }
 }

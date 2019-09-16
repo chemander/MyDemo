@@ -23,7 +23,7 @@ public class StoryPagedListAdapter extends PagedListAdapter<StoryInformation, St
     private Context context;
 
     public StoryPagedListAdapter(Context context){
-        super(StoryInformation.CALLBACK);
+        super(DIFF_CALLBACK);
         this.context = context;
     }
 
@@ -40,6 +40,7 @@ public class StoryPagedListAdapter extends PagedListAdapter<StoryInformation, St
         if (holder instanceof StoryViewHolder) {
         StoryInformation storyInformation = getItem(position);
 //        storyInformation.setStoryImgUrl(storyInformation.getStoryImgUrl());
+
         holder.itemStoryInformationDataBindBinding.setStory(storyInformation);
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +79,7 @@ public class StoryPagedListAdapter extends PagedListAdapter<StoryInformation, St
                 @Override
                 public boolean areContentsTheSame(StoryInformation oldConcert,
                                                   StoryInformation newConcert) {
-                    return true;
+                    return oldConcert.getId().equals(newConcert.getId());
                 }
             };
 }

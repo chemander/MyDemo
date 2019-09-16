@@ -75,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
-                    android:text="Font size: " />
+                    android:text="Cỡ chữ: " />
 
                 <ImageButton
                     android:id="@+id/buttonDecrease"
@@ -122,7 +122,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
-                    android:text="Font type: " />
+                    android:text="Phông chữ: " />
 
                 <Spinner
                     android:id="@+id/spinnerFontType"
@@ -130,6 +130,89 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6"
                     />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_change_style" />
+
+                <TextView
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:text="Màu nền: " />
+
+                <TextView
+                    android:id="@+id/textViewTemp1"
+                    android:layout_width="@dimen/textSize"
+                    android:layout_height="@dimen/textSize"
+                    android:layout_marginLeft="10dp"
+                    android:background="@color/cardview_dark_background"
+                    android:gravity="center"
+                    android:text="A"
+                    android:textColor="@color/cardview_light_background"
+                    android:textSize="60px"
+                    app:layout_constraintBottom_toBottomOf="@+id/textViewTemp2"
+                    app:layout_constraintEnd_toStartOf="@+id/textViewTemp2"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/textViewTemp2" />
+
+                <TextView
+                    android:id="@+id/textViewTemp2"
+                    android:layout_width="@dimen/textSize"
+                    android:layout_height="@dimen/textSize"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/text_black"
+                    android:gravity="center"
+                    android:text="A"
+                    android:textColor="@color/cardview_dark_background"
+                    android:textSize="60px"
+                    app:layout_constraintBottom_toBottomOf="@+id/textViewTemp3"
+                    app:layout_constraintEnd_toStartOf="@+id/textViewTemp3"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/textViewTemp1"
+                    app:layout_constraintTop_toTopOf="@+id/textViewTemp3" />
+
+                <TextView
+                    android:id="@+id/textViewTemp3"
+                    android:layout_width="@dimen/textSize"
+                    android:layout_height="@dimen/textSize"
+                    android:layout_marginLeft="10dp"
+                    android:background="#e0d8c3"
+                    android:gravity="center"
+                    android:text="A"
+                    android:textColor="#6a665b"
+                    android:textSize="60px"
+                    app:layout_constraintBottom_toBottomOf="@+id/textViewTemp4"
+                    app:layout_constraintEnd_toStartOf="@+id/textViewTemp4"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/textViewTemp2"
+                    app:layout_constraintTop_toTopOf="@+id/textViewTemp4" />
+
+                <TextView
+                    android:id="@+id/textViewTemp4"
+                    android:layout_width="@dimen/textSize"
+                    android:layout_height="@dimen/textSize"
+                    android:layout_marginLeft="10dp"
+                    android:background="#FAF7F7"
+                    android:gravity="center"
+                    android:text="A"
+                    android:textColor="#000000"
+                    android:textSize="60px"
+                    app:layout_constraintBottom_toBottomOf="@+id/bt_previous"
+                    app:layout_constraintEnd_toStartOf="@+id/bt_previous"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/textViewTemp3"
+                    app:layout_constraintTop_toTopOf="@+id/bt_previous" />
             </LinearLayout>
         </LinearLayout>
 

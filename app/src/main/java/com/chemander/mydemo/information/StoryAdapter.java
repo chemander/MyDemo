@@ -2,8 +2,6 @@ package com.chemander.mydemo.information;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.chemander.mydemo.R;
 import com.chemander.mydemo.data.model.StoryInformation;
-import com.chemander.mydemo.information.StoryInformationActivity;
-import com.chemander.mydemo.model.Chapter;
-import com.chemander.mydemo.reading.ReadingActivity;
 import com.chemander.mydemo.utils.SettingsManager;
 
 import java.util.ArrayList;

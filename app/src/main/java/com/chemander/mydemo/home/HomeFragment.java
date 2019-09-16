@@ -3,13 +3,16 @@ package com.chemander.mydemo.home;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +26,7 @@ import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -47,17 +51,17 @@ public class HomeFragment extends Fragment {
     private HomeRecycleAdapter fullAdapter;
     private List<StoryInformation> fullList;
     private ProgressDialog progressDialog;
-
+    private NestedScrollView nestedScrollView;
     private StoryService storyService;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.home_fragment, container, false);
+        mainView = inflater.inflate(R.layout.fragment_home_stories_lists, container, false);
 //        setRetainInstance(true);
         progressDialog = SettingsManager.showLoadingDialog(getActivity());
-        progressDialog.show();
         //Setup news list
+        nestedScrollView = (NestedScrollView)mainView.findViewById(R.id.nested_scroll_view);
         newsRecyclerView = (RecyclerView)mainView.findViewById(R.id.recycler_news);
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         newsButton = (ImageButton) mainView.findViewById(R.id.button_continue_news);
@@ -84,6 +88,7 @@ public class HomeFragment extends Fragment {
         /////////////
         storyService = ApiUtils.getStoryService();
         initComponent();
+        nestedScrollView.setVisibility(View.INVISIBLE);
         return mainView;
     }
 
@@ -146,10 +151,16 @@ public class HomeFragment extends Fragment {
                 newsAdapter.notifyDataSetChanged();
                 hotAdapter.notifyDataSetChanged();
                 fullAdapter.notifyDataSetChanged();
+            }
+        });
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
                 if(progressDialog.isShowing()){
                     progressDialog.dismiss();
                 }
+                nestedScrollView.setVisibility(View.VISIBLE);
             }
-        });
+        }, 300);
     }
 }

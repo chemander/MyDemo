@@ -3,23 +3,13 @@ package com.chemander.mydemo.data;
 import android.content.Context;
 
 
-import com.chemander.mydemo.R;
-import com.chemander.mydemo.data.model.StoryInformation;
-import com.chemander.mydemo.model.Chapter;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReadJSON {
-    public static List<Chapter> readChapterFromJSONFile(Context context) {
+    /*public static List<Chapter> readChapterFromJSONFile(Context context) {
         try {
             String jsonText = readText(context, R.raw.data);
             JSONObject jsonObject = new JSONObject(jsonText);
@@ -41,7 +31,7 @@ public class ReadJSON {
         }finally {
 //            return null;
         }
-    }
+    }*/
 
     private static String readText(Context context, int data) throws IOException {
         InputStream is = context.getResources().openRawResource(data);

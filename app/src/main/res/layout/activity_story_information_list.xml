@@ -38,6 +38,6 @@
     </LinearLayout>
     <include
         android:id="@+id/story_information_bar"
-        layout="@layout/include_story_information" />
+        layout="@layout/include_title_of_story_information" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="[Dịch]Tổng Giám Đốc Xin Anh Nhẹ Một Chút!!!- Sưu tầm"
-                        android:textColor="@color/design_default_color_primary"
+                        android:textColor="@color/grey_90"
                         android:textColorHighlight="@color/design_default_color_primary"
                         android:textSize="@dimen/text_title_size"
                         android:textStyle="bold"
@@ -67,6 +67,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Author"
+                        android:textColor="@color/grey_80"
                         app:layout_constraintBottom_toTopOf="@+id/textStatus"
                         app:layout_constraintStart_toEndOf="@+id/imageViewCover"
                         app:layout_constraintTop_toBottomOf="@+id/textTitleStory" />
@@ -78,6 +79,7 @@
                         android:layout_marginStart="8dp"
                         android:paddingEnd="5dp"
                         android:text="Status"
+                        android:textColor="@color/grey_80"
                         app:layout_constraintBottom_toTopOf="@+id/textGenre"
                         app:layout_constraintStart_toEndOf="@+id/imageViewCover"
                         app:layout_constraintTop_toBottomOf="@+id/textAuthor" />
@@ -88,6 +90,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Genre"
+                        android:textColor="@color/grey_80"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imageViewCover"
                         app:layout_constraintTop_toBottomOf="@+id/textStatus" />
@@ -131,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
                         android:text="Danh sách chương"
-                        android:textColor="@color/design_default_color_primary"
+                        android:textColor="@color/grey_90"
                         android:textColorHighlight="@color/design_default_color_primary"
                         android:textSize="@dimen/text_title_size"
                         android:textStyle="bold"
@@ -170,7 +173,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
                         android:text="Giới thiệu"
-                        android:textColor="@color/design_default_color_primary"
+                        android:textColor="@color/grey_90"
                         android:textColorHighlight="@color/design_default_color_primary"
                         android:textSize="@dimen/text_title_size"
                         android:textStyle="bold"
@@ -186,6 +189,7 @@
                         android:layout_marginTop="5dp"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
+                        android:textColor="@color/grey_80"
                         android:text="Description"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -207,7 +211,7 @@
     </androidx.core.widget.NestedScrollView>
     <include
         android:id="@+id/story_information_bar"
-        layout="@layout/include_story_information" />
+        layout="@layout/include_title_of_story_information" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

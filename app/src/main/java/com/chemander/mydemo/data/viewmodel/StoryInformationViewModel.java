@@ -2,8 +2,10 @@ package com.chemander.mydemo.data.viewmodel;
 
 import android.app.Application;
 import android.util.Log;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
@@ -40,6 +42,20 @@ public class StoryInformationViewModel extends AndroidViewModel {
                 .build();
     }
 
+    public void createNewStoryPagedList(){
+        storyPagedList = null;
+        StoryInformationDataSourceFactory factory = new StoryInformationDataSourceFactory();
+
+        PagedList.Config config = (new PagedList.Config.Builder())
+                .setEnablePlaceholders(true)
+                .setInitialLoadSizeHint(2)
+                .setPrefetchDistance(4)
+                .setPageSize(SettingsManager.SIZE_OF_PAGE)
+                .build();
+        storyPagedList = (new LivePagedListBuilder<Integer, StoryInformation>(factory, config))
+                .setFetchExecutor(executor)
+                .build();
+    }
     public LiveData<PagedList<StoryInformation>> getStoryPagedList(){
         return storyPagedList;
     }
