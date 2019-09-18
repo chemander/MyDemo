@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,9 @@ import android.widget.SearchView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -42,7 +46,7 @@ import retrofit2.Response;
 
 public class ListChaptersFragment extends Fragment {
     ArrayList<ChapterInformation> chapters;
-    StoryService storyService;
+//    StoryService storyService;
     String storyId;
     AdapterChapter adapterChapter;
     RecyclerView recyclerView;
@@ -57,7 +61,6 @@ public class ListChaptersFragment extends Fragment {
         Bundle args = new Bundle();
         args.putSerializable(ID_OF_STORY, data);
         dialog.setArguments(args);
-        Log.d("Hung", "storyid"+data.getStoryID());
         return dialog;
     }
 
@@ -76,7 +79,7 @@ public class ListChaptersFragment extends Fragment {
 //        searchView.setQueryHint("Tìm kiếm chương truyện");
         storyInformation = (StoryInformation)getArguments().getSerializable(ID_OF_STORY);
         storyId = storyInformation.getStoryID();
-        storyService = ApiUtils.getStoryService();
+//        storyService = ApiUtils.getStoryService();
         chapters = new ArrayList<>();
         adapterChapter = new AdapterChapter(getContext(), chapters);
         chapterViewModel = ViewModelProviders.of(getActivity()).get(ChapterViewModel.class);
@@ -139,23 +142,45 @@ public class ListChaptersFragment extends Fragment {
             @Override
             public void onClick(View view) {
 //                Toast.makeText(getContext(), "-position-"+chapters.get(recyclerView.indexOfChild(view)).getId()+"-title"+adapterChapter.getChapterId(recyclerView.indexOfChild(view)),Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getContext(), ReadingActivity.class);
-                intent.putExtra(SettingsManager.CHAPTERS_INFORMATION, storyId);
                 //adapterChapter.getChapterId(recyclerView.indexOfChild(view)) = id of current position
+//                Intent intent = new Intent(getContext(), ReadingActivity.class);
+//                intent.putExtra(SettingsManager.CHAPTERS_INFORMATION, storyId);
                 String chapterId = adapterChapter.getChapterId(recyclerView.indexOfChild(view));
                 storyInformation.setRecentChapterId(chapterId);
                 AppDatabase appDatabase = AppDatabase.getAppDatabase(getContext());
                 appDatabase.recentDao().insertStoryInformation(storyInformation);
-                intent.putExtra(SettingsManager.CHAPTERS_ID, chapterId);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getContext().startActivity(intent);
+//                intent.putExtra(SettingsManager.CHAPTERS_ID, chapterId);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                getContext().startActivity(intent);
+
+                chapterViewModel.setChapterId(chapterId);
+                chapterViewModel.setStoryInformation(storyInformation);
+                ReadingActivity readingActivity = new ReadingActivity();
+                FragmentManager manager = getFragmentManager();
+                if (manager.getBackStackEntryCount() > 0 ){
+                    manager.popBackStack();
+                }
+                FragmentTransaction fragmentTransaction = manager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_layout_chapters, readingActivity, SettingsManager.READING_FRAGMENT);
+                fragmentTransaction.commit();
 //                getDialog().dismiss();
-                onDestroy();
+//                getActivity().onBackPressed();
             }
         });
     }
     private void getChapters(){
-        storyService.getChapters(storyId, 1,2000).enqueue(new Callback<GetChaptersInformation>() {
+
+                chapterViewModel.loadChapters(storyInformation);
+                chapterViewModel.getMListLiveDataChapters().observe(this, new Observer<List<ChapterInformation>>() {
+                    @Override
+                    public void onChanged(List<ChapterInformation> chapterInformations) {
+                        chapters.addAll(chapterInformations);
+                        adapterChapter.notifyDataSetChanged();
+                    }
+                });
+
+                chapterViewModel.setStoryInformation(storyInformation);
+        /*storyService.getChapters(storyId, 1,2000).enqueue(new Callback<GetChaptersInformation>() {
             @Override
             public void onResponse(Call<GetChaptersInformation> call, Response<GetChaptersInformation> response) {
                 if(response.isSuccessful()){
@@ -175,6 +200,6 @@ public class ListChaptersFragment extends Fragment {
 //                    }
 //                });
             }
-        });
+        });*/
     }
 }

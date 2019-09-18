@@ -29,6 +29,8 @@ public class SettingsManager {
     public static final String STORY_INFORMATION = "storyInformation";
     public static final String CHAPTERS_INFORMATION = "chaptersInformation";
     public static final String CHAPTERS_ID = "chaptersID";
+    public static final String CHAPTERS_FRAGMENT = "chaptersFragment";
+    public static final String READING_FRAGMENT = "readingFragment";
     ///////
     public static float preferenceFontSize;
     private static final String FONT_SIZE = "fontSize";

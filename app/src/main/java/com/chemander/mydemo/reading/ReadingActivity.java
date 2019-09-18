@@ -1,9 +1,13 @@
 package com.chemander.mydemo.reading;
 
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -16,8 +20,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -37,12 +43,14 @@ import com.chemander.mydemo.data.model.GetChapterInformation;
 import com.chemander.mydemo.data.model.GetChaptersInformation;
 import com.chemander.mydemo.data.model.StoryInformation;
 import com.chemander.mydemo.data.remote.StoryService;
+import com.chemander.mydemo.data.viewmodel.ChapterViewModel;
 import com.chemander.mydemo.utils.ApiUtils;
 import com.chemander.mydemo.utils.SettingsManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,7 +60,7 @@ import retrofit2.Response;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class ReadingActivity extends AppCompatActivity {
+public class ReadingActivity extends Fragment {
     private BottomSheetBehavior mBehavior;
     private BottomSheetDialog mBottomSheetDialog;
     private View bottom_sheet;
@@ -76,6 +84,7 @@ public class ReadingActivity extends AppCompatActivity {
     private ImageButton buttonIncrease;
     private ImageButton buttonDecrease;
     private ImageButton buttonBack;
+    private ImageButton buttonListChapter;
     private EditText editFontSize;
     private String[] fontTypes;
     ScrollView scrollView;
@@ -85,46 +94,55 @@ public class ReadingActivity extends AppCompatActivity {
     String chapterId;
     String storyId;
     ProgressDialog progressDialog;
+    ChapterViewModel chapterViewModel;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-        setContentView(R.layout.activity_reading);
-        bottom_sheet = findViewById(R.id.bottom_sheet);
+        View view = inflater.inflate(R.layout.activity_reading, container,false);
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+//        setContentView(R.layout.activity_reading);
+        bottom_sheet = view.findViewById(R.id.bottom_sheet);
         mBehavior = BottomSheetBehavior.from(bottom_sheet);
-        mainContent = (TextView) findViewById(R.id.textviewMainContent);
-        txtStoryTitle = (TextView) findViewById(R.id.reading_story_title);
-        txtChapterTitle = (TextView) findViewById(R.id.reading_chapter_title);
+        mainContent = (TextView) view.findViewById(R.id.textviewMainContent);
+        txtStoryTitle = (TextView) view.findViewById(R.id.reading_story_title);
+        txtChapterTitle = (TextView) view.findViewById(R.id.reading_chapter_title);
 
-        chapter_bar = (View) findViewById(R.id.chapter_bar);
-        chapter_select = (View) findViewById(R.id.chapter_select);
-        spinner = (Spinner) findViewById(R.id.spinner_chapter);
-        scrollView = (ScrollView) findViewById(R.id.scrollReading);
-        cardViewNext = (CardView)findViewById(R.id.card_view_next);
-        cardViewPrevious = (CardView) findViewById(R.id.card_view_previous);
+        chapter_bar = (View) view.findViewById(R.id.chapter_bar);
+        chapter_select = (View) view.findViewById(R.id.chapter_select);
+        spinner = (Spinner) view.findViewById(R.id.spinner_chapter);
+        scrollView = (ScrollView) view.findViewById(R.id.scrollReading);
+        cardViewNext = (CardView)view.findViewById(R.id.card_view_next);
+        cardViewPrevious = (CardView) view.findViewById(R.id.card_view_previous);
 
-        buttonSettings = (ImageButton)findViewById(R.id.bt_settings);
+        buttonSettings = (ImageButton)view.findViewById(R.id.bt_settings);
         buttonPrevious = (ImageButton)chapter_select.findViewById(R.id.bt_previous);
         buttonFavorite = (ImageButton)chapter_select.findViewById(R.id.bt_favorite);
-        buttonNext = (ImageButton)findViewById(R.id.bt_next);
-        buttonBack = (ImageButton)findViewById(R.id.bt_back);
+        buttonNext = (ImageButton)view.findViewById(R.id.bt_next);
+        buttonBack = (ImageButton)view.findViewById(R.id.bt_back);
+        buttonListChapter = (ImageButton)view.findViewById(R.id.image_view_list_chapters);
+        chapterViewModel = ViewModelProviders.of(getActivity()).get(ChapterViewModel.class);
 
-
-        progressDialog = SettingsManager.showLoadingDialog(this);
+        progressDialog = SettingsManager.showLoadingDialog(getActivity());
         scrollView.setVerticalScrollBarEnabled(false);
         scrollView.setSmoothScrollingEnabled(true);
         chapters = new ArrayList<>();
-        storyId = getIntent().getStringExtra(SettingsManager.CHAPTERS_INFORMATION);
-        AppDatabase appDatabase = AppDatabase.getAppDatabase(this);
+        storyId = chapterViewModel.getStoryInformation().getStoryID();
+        AppDatabase appDatabase = AppDatabase.getAppDatabase(getContext());
         StoryInformation storyInformation = appDatabase.recentDao().findRecent(storyId);
         txtStoryTitle.setText(storyInformation.getStoryName());
-        chapterId = getIntent().getStringExtra(SettingsManager.CHAPTERS_ID);
-        fontTypes = SettingsManager.getAsset(getApplicationContext());
+        chapterViewModel.getChapterId().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                chapterId = s;
+            }
+        });
+        fontTypes = SettingsManager.getAsset(getContext());
 
-        spinnerAdapter = new ChapterSpinnerAdapter(this, R.layout.item_home, R.id.title_chapter, chapters);
+        spinnerAdapter = new ChapterSpinnerAdapter(getContext(), R.layout.item_home, R.id.title_chapter, chapters);
         spinner.setAdapter(spinnerAdapter);
 //        spinner.setIte
         storyService = ApiUtils.getStoryService();
@@ -144,6 +162,7 @@ public class ReadingActivity extends AppCompatActivity {
 
 //        View decorView = getWindow().getDecorView();
 //        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        return view;
     }
 
     public void nextChapter(){
@@ -175,8 +194,7 @@ public class ReadingActivity extends AppCompatActivity {
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
-                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                getActivity().onBackPressed();
             }
         });
 
@@ -247,6 +265,15 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
+        buttonListChapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                ListChaptersFragment fragment = (ListChaptersFragment) getFragmentManager().findFragmentByTag(SettingsManager.CHAPTERS_FRAGMENT);
+                ListChaptersFragment fragment = ListChaptersFragment.newInstance(chapterViewModel.getStoryInformation());
+                getFragmentManager().beginTransaction().replace(R.id.frame_layout_chapters, fragment).commit();
+            }
+        });
+
         cardViewNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -301,44 +328,36 @@ public class ReadingActivity extends AppCompatActivity {
     private void onClickMainContent() {
         if(isChapterBarHide) {
             animateChapterBar(false);
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             if(mBottomSheetDialog !=null)
                 mBottomSheetDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }else {
             animateChapterBar(true);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             if(mBottomSheetDialog !=null)
                 mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         SettingsManager.preferenceCurrentPosition = scrollView.getScrollY();
-        SettingsManager.saveSettings(this);
+        SettingsManager.saveSettings(getContext());
         super.onPause();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        SettingsManager.loadSettings(this);
+        SettingsManager.loadSettings(getContext());
     }
 
     public void setColor(){
         scrollView.setBackgroundColor(Color.parseColor(SettingsManager.preferenceBackgroundColor));
         mainContent.setTextColor(Color.parseColor(SettingsManager.preferenceTextColor));
     }
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-    }
+
     private void initContent(){
         progressDialog.show();
         getChapterContent();
@@ -358,7 +377,7 @@ public class ReadingActivity extends AppCompatActivity {
             fontType = spinnerFontType.getItemAtPosition(SettingsManager.preferenceFontType).toString();
         }
 //        Log.d("Hung", fontType);
-        Typeface type = Typeface.createFromAsset(getAssets(),"fonts/"+fontType);
+        Typeface type = Typeface.createFromAsset(getActivity().getAssets(),"fonts/"+fontType);
         mainContent.setTypeface(type);
     }
 
@@ -472,7 +491,7 @@ public class ReadingActivity extends AppCompatActivity {
 
         editFontSize = (EditText)view.findViewById(R.id.editTextSize);
         spinnerFontType  = (Spinner) view.findViewById(R.id.spinnerFontType);
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, fontTypes);
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item, fontTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerFontType.setAdapter(adapter);
         spinnerFontType.setSelection(SettingsManager.preferenceFontType);
@@ -495,7 +514,7 @@ public class ReadingActivity extends AppCompatActivity {
 //        });
 
         if(mBottomSheetDialog == null)
-        mBottomSheetDialog = new BottomSheetDialog(this);
+        mBottomSheetDialog = new BottomSheetDialog(getContext());
         mBottomSheetDialog.setContentView(view);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -536,7 +555,7 @@ public class ReadingActivity extends AppCompatActivity {
         return 0;
     }
     private void getChapterContent(){
-        storyService.getChapterDetail(chapterId).enqueue(new Callback<GetChapterInformation>() {
+        /*storyService.getChapterDetail(chapterId).enqueue(new Callback<GetChapterInformation>() {
             @Override
             public void onResponse(Call<GetChapterInformation> call, Response<GetChapterInformation> response) {
                     if(response.isSuccessful()){
@@ -552,21 +571,47 @@ public class ReadingActivity extends AppCompatActivity {
                             }
                         });
                     }else{
-                        Toast.makeText(getApplication(), "Dữ liệu chương bị lỗi", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Dữ liệu chương bị lỗi", Toast.LENGTH_SHORT).show();
                     }
                 dismiss();
             }
 
             @Override
             public void onFailure(Call<GetChapterInformation> call, Throwable t) {
-                Toast.makeText(getApplication(), "Không lấy được nội dụng của chương", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Không lấy được nội dụng của chương", Toast.LENGTH_SHORT).show();
+                dismiss();
+            }
+        });*/
+
+        chapterViewModel.loadChapterContent(chapterId);
+        chapterViewModel.getChapterDetail().observe(this, new Observer<ChapterDetail>() {
+            @Override
+            public void onChanged(ChapterDetail chapterDetail) {
+                txtChapterTitle.setText("Chương "+chapterDetail.getChapterName());
+                String content = chapterDetail.getChapterContent();
+                content = content.replace("\n", "\n\n"+"    ");
+                mainContent.setText("   "+content);
+                scrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollView.scrollTo(0,SettingsManager.preferenceCurrentPosition);
+                    }
+                });
                 dismiss();
             }
         });
     }
 
     private void getChapters(){
-        storyService.getChapters(storyId, 1,2000).enqueue(new Callback<GetChaptersInformation>() {
+        chapterViewModel.getMListLiveDataChapters().observe(this, new Observer<List<ChapterInformation>>() {
+            @Override
+            public void onChanged(List<ChapterInformation> chapterInformations) {
+                chapters.addAll(chapterInformations);
+                spinnerAdapter.notifyDataSetChanged();
+                spinner.setSelection(findInChapters());
+            }
+        });
+        /*storyService.getChapters(storyId, 1,2000).enqueue(new Callback<GetChaptersInformation>() {
             @Override
             public void onResponse(Call<GetChaptersInformation> call, Response<GetChaptersInformation> response) {
                 if(response.isSuccessful()){
@@ -574,7 +619,6 @@ public class ReadingActivity extends AppCompatActivity {
                     spinnerAdapter.notifyDataSetChanged();
                     spinner.setSelection(findInChapters());
                 }else Log.d("Hung", "Total = "+response.code());
-
                 dismiss();
             }
 
@@ -590,7 +634,7 @@ public class ReadingActivity extends AppCompatActivity {
 //                    }
 //                });
             }
-        });
+        });*/
     }
 
     private void dismiss(){

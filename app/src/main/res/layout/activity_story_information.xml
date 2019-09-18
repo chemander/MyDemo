@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
+        android:layout_marginBottom="@dimen/actionBarSize"
         android:scrollbars="none"
         android:scrollingCache="true">
 
@@ -212,7 +213,53 @@
     <include
         android:id="@+id/story_information_bar"
         layout="@layout/include_title_of_story_information" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/actionBarSize"
+        android:layout_gravity="bottom"
+        android:background="@drawable/shadow_top"
+        android:orientation="horizontal"
+        android:weightSum="3.0">
 
+        <Button
+            android:id="@+id/btDownLoad"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/ic_download_content"
+            android:padding="7.0dip"
+            android:text="Tải truyện"
+            android:textColor="@color/grey_60"
+            android:drawableTint="@color/grey_60"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btRead"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:background="@color/flat_red"
+            android:padding="7.0dip"
+            android:text="ĐỌC NGAY"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btNoti"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/ic_unfavorite"
+            android:drawableTint="@color/grey_60"
+            android:padding="7.0dip"
+            android:text="Theo dõi"
+            android:textColor="@color/grey_60"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

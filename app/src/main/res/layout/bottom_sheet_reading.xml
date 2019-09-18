@@ -114,7 +114,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_text_format_black_24dp" />
+                    app:srcCompat="@drawable/ic_ttf_file_format_symbol" />
 
                 <TextView
                     android:id="@+id/textView"

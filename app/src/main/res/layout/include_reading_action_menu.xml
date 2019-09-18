@@ -58,7 +58,8 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <ImageView
+        <ImageButton
+            android:id="@+id/image_view_list_chapters"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_categories"
