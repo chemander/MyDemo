@@ -28,10 +28,11 @@
                 android:id="@+id/bt_back"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:tint="@android:color/black"
+                android:tint="@color/grey_90"
                 app:srcCompat="@drawable/ic_back" />
             <!--<TextView
                 android:id="@+id/search_text"
@@ -53,14 +54,25 @@
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:textColor="@color/grey_90"
+                android:gravity="center"
                 app:autoSizeTextType="uniform"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/bt_back"
                 app:layout_constraintStart_toEndOf="@id/bt_back"
+                app:layout_constraintEnd_toStartOf="@id/bt_search"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageButton
+                android:id="@+id/bt_search"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/grey_90"
+                app:srcCompat="@drawable/ic_search_black_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

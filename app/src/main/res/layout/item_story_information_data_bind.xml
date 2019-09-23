@@ -9,7 +9,7 @@
     <data>
         <variable
             name="story"
-            type="com.chemander.mydemo.data.model.StoryInformation"
+            type="com.chemander.story.data.model.StoryInformation"
             />
     </data>
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,8 +36,8 @@
             <ImageView
                 android:id="@+id/imageViewCover"
                 android:layout_width="70dp"
-                android:layout_height="90dp"
-                android:scaleType="centerCrop"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
                 android:adjustViewBounds="true"
                 bind:storyImgUrl="@{story.storyImgUrl}" />
             </androidx.cardview.widget.CardView>
@@ -82,7 +82,7 @@
                 android:layout_marginTop="3dp"
                 tools:text="Author"
                 android:textColor="@color/grey_80"
-                android:text="@{story.storyAuthor}"
+                android:text=""
                 bind:layout_constraintBottom_toTopOf="@+id/textStatus"
                 bind:layout_constraintStart_toEndOf="@+id/layout_imageViewCover"
                 bind:layout_constraintTop_toBottomOf="@+id/textTitleStory" />
@@ -96,7 +96,7 @@
                 android:layout_marginTop="3dp"
                 tools:text="Status"
                 android:textColor="@color/grey_80"
-                android:text="@{story.storyStatus}"
+                android:text=""
                 bind:layout_constraintBottom_toTopOf="@+id/textGenre"
                 bind:layout_constraintStart_toEndOf="@+id/layout_imageViewCover"
                 bind:layout_constraintTop_toBottomOf="@+id/textAuthor" />
@@ -110,7 +110,7 @@
                 android:layout_marginTop="3dp"
                 tools:text="Genre"
                 android:textColor="@color/grey_80"
-                android:text="@{story.storyGenre}"
+                android:text=""
                 bind:layout_constraintStart_toEndOf="@+id/layout_imageViewCover"
                 bind:layout_constraintTop_toBottomOf="@+id/textStatus" />
         </androidx.constraintlayout.widget.ConstraintLayout>

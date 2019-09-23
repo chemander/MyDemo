@@ -5,10 +5,18 @@
     android:layout_gravity="center"
     android:background="@android:color/transparent">
 
-    <ProgressBar
+    <!--<ProgressBar
         android:id="@+id/pb_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:progressDrawable="@color/black_overlay" />
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@android:color/holo_blue_bright"
+        android:progressDrawable="@color/black_overlay" />-->
+    
+    <com.chemander.story.utils.ViewLoadingDotsGrow
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:background="#4DD0E1"/>
 </RelativeLayout>

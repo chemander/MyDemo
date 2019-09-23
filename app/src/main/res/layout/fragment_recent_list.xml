@@ -1,0 +1,14 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nested_scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:scrollbars="none"
+    android:scrollingCache="true">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_home"
+        android:layout_width="wrap_content"
+        android:overScrollMode="always"
+        android:layout_height="wrap_content" />
+</androidx.core.widget.NestedScrollView>

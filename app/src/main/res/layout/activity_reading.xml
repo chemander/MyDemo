@@ -59,6 +59,8 @@
             android:id="@+id/textviewMainContent"
             />
                 <include
+                    android:id="@+id/bottom_action"
+                    android:visibility="invisible"
                     layout="@layout/include_reading_action_menu" />
             </LinearLayout>
         </ScrollView>

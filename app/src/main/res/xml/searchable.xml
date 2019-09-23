@@ -2,7 +2,7 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/app_name"
     android:hint="Tìm kiếm truyện"
-    android:searchSuggestAuthority="com.chemander.mydemo.search.StorySuggestionProvider"
+    android:searchSuggestAuthority="com.chemander.story.search.StorySuggestionProvider"
     android:searchSuggestSelection=" ?"
     >
 </searchable>

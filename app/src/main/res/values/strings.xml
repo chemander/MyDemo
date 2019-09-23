@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyDemo</string>
+    <string name="app_name">Phố Truyện</string>
 
     <string name="title_activity_reading">ReadingActivity</string>
     <string name="dummy_button">Dummy Button</string>
