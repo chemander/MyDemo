@@ -76,14 +76,14 @@ public class ChaptersActivity extends AppCompatActivity {
                         public void onChanged(List<ChapterInformation> chapterInformations) {
                             if(chapterInformations.size() > 0) {
                                 chapterViewModel.setChapterId(chapterInformations.get(0).getChapterID());
-                                fragmentTransaction.replace(R.id.frame_layout_chapters, readingActivity, SettingsManager.READING_FRAGMENT);
-                                fragmentTransaction.commit();
                             }else {
                                 Toast.makeText(getApplicationContext(), "Không tìm thấy dữ liệu chương",Toast.LENGTH_SHORT).show();
                                 appCompatActivity.finish();
                             }
                         }
                     });
+                    fragmentTransaction.replace(R.id.frame_layout_chapters, readingActivity, SettingsManager.READING_FRAGMENT);
+                    fragmentTransaction.commit();
                 }
             }, 500);
 

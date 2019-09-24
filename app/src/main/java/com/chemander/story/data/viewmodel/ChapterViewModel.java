@@ -47,7 +47,7 @@ public class ChapterViewModel extends AndroidViewModel {
 
     public void loadChapters(StoryInformation storyInformation){
         List<ChapterInformation> chapters = new ArrayList<>();
-                storyService.getChapters(storyInformation.getStoryID(), 1,2000).enqueue(new Callback<GetChaptersInformation>() {
+                storyService.getChapters(storyInformation.getStoryID(), 1,10000).enqueue(new Callback<GetChaptersInformation>() {
                     @Override
                     public void onResponse(Call<GetChaptersInformation> call, Response<GetChaptersInformation> response) {
                         if(response.isSuccessful()){

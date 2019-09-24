@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
@@ -126,7 +127,6 @@ public class ReadingActivity extends Fragment {
         storyId = storyInformation.getStoryID();
         currentPosition = storyInformation.getRecentPosition();
         Log.d("Hung", "CurrentPostions"+currentPosition);
-        AppDatabase appDatabase = AppDatabase.getAppDatabase(getContext());
         txtStoryTitle.setText(storyInformation.getStoryName());
         chapterViewModel.getChapterId().observe(this, new Observer<String>() {
             @Override
@@ -282,6 +282,38 @@ public class ReadingActivity extends Fragment {
             }
         });
 
+        //SetListener for Bottom Action
+        ImageButton imageListChapters = bottomAction.findViewById(R.id.image_view_list_chapters);
+        CardView cardViewBottomNext = bottomAction.findViewById(R.id.card_view_next);
+        CardView cardViewBottomPrevious = bottomAction.findViewById(R.id.card_view_previous);
+        imageListChapters.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                ListChaptersFragment fragment = (ListChaptersFragment) getFragmentManager().findFragmentByTag(SettingsManager.CHAPTERS_FRAGMENT);
+                try {
+                    ListChaptersFragment fragment = ListChaptersFragment.newInstance(chapterViewModel.getStoryInformation());
+                    getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).replace(R.id.frame_layout_chapters, fragment).commit();
+                }catch (Exception e){
+                    chapterViewModel.deleteStoryInformation(storyInformation);
+                }
+
+            }
+        });
+
+        cardViewBottomNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nextChapter();
+            }
+        });
+
+        cardViewBottomPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                previousChapter();
+            }
+        });
+        //End setlistener for bottom action
         cardViewNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -381,6 +413,7 @@ public class ReadingActivity extends Fragment {
     private void initContent(){
         try {
             progressDialog.show();
+            bottomAction.setVisibility(View.INVISIBLE);
             getChapterContent();
             setTextSize();
             setFontType();
@@ -627,6 +660,7 @@ public class ReadingActivity extends Fragment {
                 });
                 dismiss();
                 bottomAction.setVisibility(View.VISIBLE);
+//                setListener();
             }
         });
     }

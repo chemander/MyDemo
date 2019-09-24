@@ -88,15 +88,15 @@ public class ListChaptersFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 linearLayoutManager.getOrientation());
-        LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_fall_down);
+//        LayoutAnimationController controller =
+//                AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_fall_down);
 
-        recyclerView.setLayoutAnimation(controller);
+//        recyclerView.setLayoutAnimation(controller);
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setAdapter(adapterChapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
+//        recyclerView.scheduleLayoutAnimation();
 
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
