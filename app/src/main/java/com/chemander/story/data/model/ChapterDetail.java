@@ -1,31 +1,50 @@
 package com.chemander.story.data.model;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
+@Entity(tableName = "chapterDetail")
 public class ChapterDetail {
     @SerializedName("_id")
     @Expose
+    @NonNull
+    @PrimaryKey
+    @ColumnInfo(name = "_id")
     private String id;
     @SerializedName("chapterUrl")
+    @ColumnInfo(name = "chapterUrl")
     @Expose
     private String chapterUrl;
     @SerializedName("storyID")
+    @ColumnInfo(name = "storyID")
     @Expose
     private String storyID;
     @SerializedName("chapterID")
+    @ColumnInfo(name = "chapterID")
     @Expose
     private String chapterID;
     @SerializedName("chapterName")
+    @ColumnInfo(name = "chapterName")
     @Expose
     private String chapterName;
     @SerializedName("chapterContent")
+    @ColumnInfo(name = "chapterContent")
     @Expose
     private String chapterContent;
     @SerializedName("chapterNum")
+    @ColumnInfo(name = "chapterNum")
     @Expose
     private Integer chapterNum;
+    @SerializedName("chapterNumText")
+    @ColumnInfo(name = "chapterNumText")
+    @Expose
+    private String chapterNumText;
     @SerializedName("chapterUpdated")
+    @ColumnInfo(name = "chapterUpdated")
     @Expose
     private Integer chapterUpdated;
 
@@ -83,6 +102,14 @@ public class ChapterDetail {
 
     public void setChapterNum(Integer chapterNum) {
         this.chapterNum = chapterNum;
+    }
+
+    public String getChapterNumText() {
+        return chapterNumText;
+    }
+
+    public void setChapterNumText(String chapterNumText) {
+        this.chapterNumText = chapterNumText;
     }
 
     public Integer getChapterUpdated() {

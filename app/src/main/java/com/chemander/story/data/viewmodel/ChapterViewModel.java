@@ -55,8 +55,10 @@ public class ChapterViewModel extends AndroidViewModel {
                             Collections.sort(temp, new Comparator<ChapterInformation>() {
                                 @Override
                                 public int compare(ChapterInformation chapterInformation, ChapterInformation t1) {
-                                    return chapterInformation.getChapterID().compareToIgnoreCase(t1.getChapterID());
-//                                    return chapterInformation.getChapterNum().compareToIgnoreCase(t1.getChapterNum());
+//                                    return chapterInformation.getChapterID().compareToIgnoreCase(t1.getChapterID());
+                                    if(chapterInformation.getChapterNum() > t1.getChapterNum()){
+                                        return 1;
+                                    }else return -1;
                                 }
                             });
                             chapters.addAll(temp);

@@ -7,12 +7,20 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.chemander.story.data.model.ChapterDetail;
+import com.chemander.story.data.model.ChapterInformation;
 import com.chemander.story.data.model.StoryInformation;
 
 @Dao
 public interface RecentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertStoryInformation(StoryInformation... storyInformation);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Long insertChapterDetail(ChapterDetail chapterDetail);
+
+    @Query("SELECT * FROM chapterDetail WHERE storyID = :storyId")
+    ChapterDetail[] loadAllChapterDetails(String storyId);
 
     @Query("SELECT * FROM recent ORDER BY recentTime DESC LIMIT 1")
     StoryInformation loadLastestRecent();

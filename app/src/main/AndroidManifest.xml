@@ -11,8 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.chemander.story.reading.ChaptersActivity"></activity>
+        <service android:name=".offline.service.NotificationService"/>
 
+        <activity android:name="com.chemander.story.reading.ChaptersActivity"></activity>
         <activity
             android:name="com.chemander.story.search.SearchActivity"
             android:launchMode="singleTop">
@@ -44,6 +45,7 @@
             android:authorities="com.chemander.story.search.StorySuggestionProvider" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 

@@ -7,9 +7,10 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.chemander.story.data.dao.RecentDao;
+import com.chemander.story.data.model.ChapterDetail;
 import com.chemander.story.data.model.StoryInformation;
 
-@Database(entities = {StoryInformation.class}, version = 1)
+@Database(entities = {StoryInformation.class, ChapterDetail.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
     private final static String DATABASE_NAME = "Local";

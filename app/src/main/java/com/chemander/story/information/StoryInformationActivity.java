@@ -21,9 +21,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.chemander.story.data.viewmodel.ChapterViewModel;
+import com.chemander.story.offline.service.NotificationService;
 import com.chemander.story.reading.AdapterChapter;
 import com.chemander.story.R;
 import com.chemander.story.data.model.ChapterInformation;
@@ -49,11 +51,13 @@ public class StoryInformationActivity extends AppCompatActivity {
     public ImageView imgBackground;
     private Button btReadNow;
     private Button btFavorite;
+    private Button btDownload;
     public TextView title;
     public TextView description;
     public TextView author;
     public TextView genre;
     public TextView status;
+    public TextView totalChapters;
     public ChapterViewModel viewModel;
 //    public TextView titleStoryBar;
 //    public ImageButton imageButtonBack;
@@ -86,9 +90,11 @@ public class StoryInformationActivity extends AppCompatActivity {
         author = (TextView) findViewById(R.id.textAuthor);
         status = (TextView) findViewById(R.id.textStatus);
         genre = (TextView) findViewById(R.id.textGenre);
+        totalChapters = (TextView) findViewById(R.id.textTotalChapters);
 
         btFavorite = (Button)findViewById(R.id.bt_favorite);
         btReadNow = (Button)findViewById(R.id.bt_read_now);
+        btDownload = (Button)findViewById(R.id.bt_download);
 //        recyclerView = (RecyclerView) findViewById(R.id.list_chapters);
 //        imageButtonBack = (ImageButton) findViewById(R.id.bt_back);
         cardView = (CardView)findViewById(R.id.card_view_show_list_chapter);
@@ -107,22 +113,40 @@ public class StoryInformationActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-
+    byte[] byteArrays;
+    AppCompatActivity aaa = this;
     private void setParameters() {
         if(storyInformation != null) {
             Glide.with(this).load(storyInformation.getStoryImgUrl()).into(cover);
+            /*Glide.with(this).asBitmap().load(storyInformation.getStoryImgUrl()).into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    resource.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    String encodedImageString = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                    byteArrays = Base64.decode(encodedImageString, Base64.DEFAULT);
+                    Bitmap bmimage = BitmapFactory.decodeByteArray(byteArrays, 0,
+                            byteArrays.length);
+                    Glide.with(aaa).asBitmap().load(bmimage).into(cover);
+                    Log.d("Hung", "String: "+encodedImageString);
+                }
+            });*/
             title.setText(storyInformation.getStoryName());
 //            titleStoryBar.setText(storyInformation.getStoryName());
             String descriptionContent = storyInformation.getStoryDescription();
             descriptionContent = descriptionContent.replace("\n", "\n\n"+"    ");
             description.setText("   "+descriptionContent);
             author.setText("Tác giả: "+storyInformation.getStoryAuthor());
-            if(storyInformation.getStoryGenre()!= null && !storyInformation.getStoryStatus().toString().equals("")){
-                status.setText("Trạng thái: "+storyInformation.getStoryGenre());
-            }else status.setText("Trạng thái: Đang cập nhật");
 
-            genre.setText("Thể loại: "+storyInformation.getStoryStatus().toString());
+            if(storyInformation.getStoryStatus()== null || storyInformation.getStoryStatus().isEmpty()){
+                status.setText("Trạng thái: Đang cập nhật");
+            }else {
+                status.setText("Trạng thái: "+storyInformation.getStoryStatus());
+            }
 
+            genre.setText("Thể loại: "+storyInformation.getStoryGenre());
+            totalChapters.setText("Số chương: "+storyInformation.getCountChapter());
             toolbar.setTitle(storyInformation.getStoryName());
         }
 
@@ -206,17 +230,33 @@ public class StoryInformationActivity extends AppCompatActivity {
                 clickOnFavorite();
             }
         });
+
+        btDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDownload();
+            }
+        });
+
         setBackground();
 
         StoryInformation story = viewModel.findStoryInformation(storyId);
-        Log.d("Hung", ""+story);
         if(story!=null){
+            Log.d("Hung", "storyID = "+story.getStoryID());
             storyInformation = story;
             setParameters();
 //            initButtonFavorite();
         }else {
             getStoryInformation();
         }
+
+    }
+
+    private void startDownload() {
+
+        Intent intent = new Intent(this, NotificationService.class);
+        intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation);
+        startService(intent);
     }
 
     private void initButtonFavorite(){

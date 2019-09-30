@@ -43,7 +43,7 @@ public class StoryPagedListAdapter extends PagedListAdapter<StoryInformation, St
 
         holder.itemStoryInformationDataBindBinding.setStory(storyInformation);
         holder.textAuthor.setText("Tác giả: "+storyInformation.getStoryAuthor());
-        if(storyInformation.getStoryStatus().toString().isEmpty()){
+        if(storyInformation.getStoryStatus()==null || storyInformation.getStoryStatus().isEmpty()){
             holder.textStatus.setText("Trạng thái: Đang cập nhật");
         }else {
             holder.textStatus.setText("Trạng thái: "+storyInformation.getStoryStatus());

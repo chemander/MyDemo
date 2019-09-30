@@ -1,5 +1,8 @@
 package com.chemander.story.data.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,7 @@ import com.chemander.story.R;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -28,6 +32,10 @@ public class StoryInformation extends BaseObservable implements Serializable {
     @SerializedName("storyCountView")
     @Expose
     private Integer storyCountView;
+    @SerializedName("countChapter")
+    @ColumnInfo(name = "countChapter")
+    @Expose
+    private Integer countChapter;
     @SerializedName("_id")
     @Expose
     @NonNull
@@ -63,14 +71,14 @@ public class StoryInformation extends BaseObservable implements Serializable {
     @Expose
     private String storyGenre;
     @SerializedName("storyStatus")
-    @Ignore
-//    @ColumnInfo(name = "storyStatus")
+    @ColumnInfo(name = "storyStatus")
     @Expose
-    private Object storyStatus;
+    private String storyStatus;
     @SerializedName("storyUpdated")
     @ColumnInfo(name = "storyUpdated")
     @Expose
     private Integer storyUpdated;
+
 
     @ColumnInfo(name = "recentChapterId")
     private String recentChapterId = "";
@@ -86,7 +94,8 @@ public class StoryInformation extends BaseObservable implements Serializable {
     private long downloadTime = 0;
     @ColumnInfo(name = "favoriteTime")
     private long favoriteTime = 0;
-
+    @ColumnInfo(name = "saveCover")
+    private String saveCover = "";
 
 
     @BindingAdapter({ "storyImgUrl" })
@@ -197,13 +206,11 @@ public class StoryInformation extends BaseObservable implements Serializable {
     }
 
     @Bindable
-    public Object getStoryStatus() {
-        if(storyStatus == null)
-            return "";
+    public String getStoryStatus() {
         return storyStatus;
     }
 
-    public void setStoryStatus(Object storyStatus) {
+    public void setStoryStatus(String storyStatus) {
         this.storyStatus = storyStatus;
         notifyPropertyChanged(BR.storyStatus);
     }
@@ -253,6 +260,14 @@ public class StoryInformation extends BaseObservable implements Serializable {
         setFavoriteTime(Calendar.getInstance().getTimeInMillis());
     }
 
+    public Integer getCountChapter() {
+        return countChapter;
+    }
+
+    public void setCountChapter(Integer countChapter) {
+        this.countChapter = countChapter;
+    }
+
     public long getRecentTime() {
         return recentTime;
     }
@@ -275,6 +290,30 @@ public class StoryInformation extends BaseObservable implements Serializable {
 
     public void setFavoriteTime(long favoriteTime) {
         this.favoriteTime = favoriteTime;
+    }
+
+    public String getSaveCover() {
+        return saveCover;
+    }
+
+    public void setSaveCover(String saveCover) {
+        this.saveCover = saveCover;
+    }
+
+    public Bitmap getLocalCover() {
+        byte[] byteArrays = Base64.decode(saveCover, Base64.DEFAULT);
+//                    resource.recycle();
+        Bitmap bmimage = BitmapFactory.decodeByteArray(byteArrays, 0,
+                byteArrays.length);
+        return bmimage;
+    }
+
+    public void setLocalCover(Bitmap resource) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        resource.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        String encodedImageString = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        this.saveCover = encodedImageString;
     }
 
     public static final DiffUtil.ItemCallback<StoryInformation> CALLBACK = new DiffUtil.ItemCallback<StoryInformation>() {
