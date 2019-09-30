@@ -111,11 +111,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
             StoryInformation storyInformation = viewModel.loadRecentStory();
+            if(storyInformation != null) {
                 Intent intent = new Intent(getApplicationContext(), ChaptersActivity.class);
                 intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation);
                 intent.putExtra(SettingsManager.READ_NOW, true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+            }
             }
         });
 
