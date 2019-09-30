@@ -253,10 +253,11 @@ public class StoryInformationActivity extends AppCompatActivity {
     }
 
     private void startDownload() {
-
+        Toast.makeText(this, "Tính năng đang cập nhật...", Toast.LENGTH_SHORT).show();
+        /*
         Intent intent = new Intent(this, NotificationService.class);
         intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation);
-        startService(intent);
+        startService(intent);*/
     }
 
     private void initButtonFavorite(){

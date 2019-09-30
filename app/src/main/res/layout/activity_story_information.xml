@@ -365,7 +365,7 @@
             android:drawableTop="@drawable/ic_download_content"
             android:padding="7.0dip"
             android:text="Tải truyện"
-            android:enabled="false"
+            android:enabled="true"
             android:textColor="@color/grey_60"
             android:drawableTint="@color/grey_60"
             android:textSize="12sp" />
