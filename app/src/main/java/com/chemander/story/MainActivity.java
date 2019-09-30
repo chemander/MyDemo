@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chemander.story.data.model.StoryInformation;
 import com.chemander.story.data.remote.StoryService;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     ChapterViewModel viewModel;
-
+    AppCompatActivity appCompatActivity = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(SettingsManager.READ_NOW, true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-            }
+            }else Toast.makeText(appCompatActivity, "Bạn vẫn chưa đọc truyện", Toast.LENGTH_SHORT).show();
             }
         });
 
