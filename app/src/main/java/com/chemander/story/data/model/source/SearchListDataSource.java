@@ -62,7 +62,6 @@ public class SearchListDataSource extends PageKeyedDataSource<Integer, StoryInfo
         storyService.getSearchListStories(params.key, SettingsManager.SIZE_OF_PAGE, SettingsManager.queryOfSearch).enqueue(new Callback<GetStoriesInformation>() {
             @Override
             public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
-                Log.d("Hung", "loadAfter");
                 List<StoryInformation> storyInformations = new ArrayList<>();
                 if(response.isSuccessful()){
                     GetStoriesInformation getStoriesInformation = response.body();

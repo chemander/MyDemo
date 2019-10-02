@@ -19,6 +19,7 @@ import com.chemander.story.data.remote.StoryService;
 import com.chemander.story.utils.ApiUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -63,17 +64,34 @@ public class ChapterViewModel extends AndroidViewModel {
                             });
                             chapters.addAll(temp);
                             mutableLiveDataChapters.setValue(chapters);
-                        }else Log.d("Hung", "Total = "+response.code());
+                        }else {
+                            if(storyInformation.isDownload()){
+                                chapters.addAll(Arrays.asList(loadAllChapterInformations()));
+                                mutableLiveDataChapters.setValue(chapters);
+                            }
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<GetChaptersInformation> call, Throwable t) {
-//
+                        if(storyInformation.isDownload()){
+                            chapters.addAll(Arrays.asList(loadAllChapterInformations()));
+                            mutableLiveDataChapters.setValue(chapters);
+                        }
                     }
                 });
     }
 
     public void loadChapterContent(String chapterId){
+
+        if(storyInformation.isDownload()){
+            ChapterDetail localChapter = findChapterDetail(chapterId);
+            if(localChapter != null){
+                chapterDetail.setValue(localChapter);
+                return;
+            }
+        }
+
         storyService.getChapterDetail(chapterId).enqueue(new Callback<GetChapterInformation>() {
             @Override
             public void onResponse(Call<GetChapterInformation> call, Response<GetChapterInformation> response) {
@@ -90,6 +108,10 @@ public class ChapterViewModel extends AndroidViewModel {
         });
     }
 
+
+    public ChapterDetail findChapterDetail(String chapterID){
+        return appDatabase.recentDao().findChapterDetail(chapterID);
+    }
     public MutableLiveData<ChapterDetail> getChapterDetail() {
         return chapterDetail;
     }
@@ -117,18 +139,24 @@ public class ChapterViewModel extends AndroidViewModel {
     }
 
     public StoryInformation findStoryInformation(String storyId){
-        Log.d("Hung", "Alldata"+appDatabase.recentDao().loadAllRecent().length);
         StoryInformation storyInformation = appDatabase.recentDao().findRecent(storyId);
-        if(storyInformation!=null) {
-            Log.d("Hung", "Find: " + storyInformation.getId() + "-recent" + storyInformation.getRecentChapterId() + "-position=" + storyInformation.getRecentPosition());
-        }else {
-            Log.d("Hung", "storyInformation - "+storyId+"= "+storyInformation);
-        }
         return storyInformation;
+    }
+
+    public ChapterInformation[] loadAllChapterInformations(){
+        ChapterInformation[] chapterInformations = appDatabase.recentDao().loadAllChapterInformations(storyInformation.getStoryID());
+        return chapterInformations;
     }
 
     public StoryInformation[] loadAllFavoriteStories(){
         StoryInformation[] stories = appDatabase.recentDao().loadAllFavorite();
+//        Log.d("Hung", "loadAllFavoriteStories - "+stories.length+"= "+stories[0].getStoryName()+"= "+stories[1].getStoryName());
+//        this.stories.setValue(stories);
+        return stories;
+    }
+
+    public StoryInformation[] loadAllDownloadStories(){
+        StoryInformation[] stories = appDatabase.recentDao().loadAllDownload();
 //        Log.d("Hung", "loadAllFavoriteStories - "+stories.length+"= "+stories[0].getStoryName()+"= "+stories[1].getStoryName());
 //        this.stories.setValue(stories);
         return stories;

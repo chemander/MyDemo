@@ -362,7 +362,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1.0"
             android:background="@android:color/transparent"
-            android:drawableTop="@drawable/ic_download_content"
+            android:drawableTop="@drawable/ic_file_download"
             android:padding="7.0dip"
             android:text="Tải truyện"
             android:enabled="true"

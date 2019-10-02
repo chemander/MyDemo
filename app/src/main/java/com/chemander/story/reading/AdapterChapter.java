@@ -95,7 +95,7 @@ public class AdapterChapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof ViewHolder) {
             ViewHolder view = (ViewHolder) holder;
             final ChapterInformation chapter = chapters.get(position);
-            view.title.setText(chapter.getChapterName());
+            view.title.setText("Chương "+chapter.getChapterName());
             view.layout.setOnClickListener(onClickListener);
 //            view.layout.setOnClickListener(new View.OnClickListener() {
 //                @Override

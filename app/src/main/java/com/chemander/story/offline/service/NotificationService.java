@@ -70,7 +70,6 @@ public class NotificationService extends Service {
             stopSelf();
         }else {
             storyInformation = (StoryInformation) intent.getSerializableExtra(SettingsManager.STORY_INFORMATION);
-            Log.d("Hung", "Total downloaded chapter-" + appDatabase.recentDao().loadAllChapterDetails(storyInformation.getStoryID()).length);
             if (storyInformation == null) {
                 stopSelf();
             }
@@ -88,7 +87,6 @@ public class NotificationService extends Service {
 
     public void loadChapters(){
         Toast.makeText(this, "Đang tải...", Toast.LENGTH_SHORT).show();
-        Log.d("Hung", "getStoryID - "+storyInformation.getStoryID());
         storyService.getChapters(storyInformation.getStoryID(), 1,10000).enqueue(new Callback<GetChaptersInformation>() {
             @Override
             public void onResponse(Call<GetChaptersInformation> call, Response<GetChaptersInformation> response) {
@@ -118,7 +116,6 @@ public class NotificationService extends Service {
     public void startDownload(){
         DownloadChapters downloadChapters = new DownloadChapters();
         downloadChapters.execute();
-        Log.d("Hung", "Start download");
     }
 
     public void showNotification(){
@@ -129,7 +126,7 @@ public class NotificationService extends Service {
 //            notificationBuilder = new NotificationCompat.Builder(getApplicationContext());
 //        }
 
-        notificationBuilder.setSmallIcon(R.drawable.ic_download_content)
+        notificationBuilder.setSmallIcon(R.drawable.ic_file_download)
                 .setContentTitle(storyInformation.getStoryName())
                 .setContentText("0/"+chapters.size())
                 .setOngoing(true)
@@ -157,6 +154,7 @@ public class NotificationService extends Service {
     class DownloadChapters extends AsyncTask<Void, Integer, Void>{
         int progress = 0;
         boolean isEnd = false;
+        Object done;
         @Override
         protected Void doInBackground(Void... voids) {
             Callback<GetChapterInformation> callback = new Callback<GetChapterInformation>() {
@@ -168,6 +166,9 @@ public class NotificationService extends Service {
                             appDatabase.recentDao().insertChapterDetail(response.body().getChapterDetail());
                             if(progress == chapters.size()) {
                             isEnd = true;
+                            }
+                            synchronized (done){
+                                done.notifyAll();
                             }
                             publishProgress(progress);
                         }
@@ -182,10 +183,18 @@ public class NotificationService extends Service {
             };
 
              for (int i = 0; i < chapters.size(); i++){
+                 done = new Object();
                 final ChapterInformation chapter = chapters.get(i);
                 progress = i+1;
                  storyService.getChapterDetail(chapter.getId()).enqueue(callback);
-                 SystemClock.sleep(10);
+//                 SystemClock.sleep(50);
+                 synchronized (done){
+                     try {
+                         done.wait(10000);
+                     } catch (InterruptedException e) {
+                         e.printStackTrace();
+                     }
+                 }
                 /*if(i > (chapters.size() - 5)){
                     SystemClock.sleep(500);
                 }*/
@@ -202,7 +211,6 @@ public class NotificationService extends Service {
             notificationManager.notify(serviceID, notificationBuilder.build());
 //            Log.d("Hung", "values[0] -" + values[0]);
             if(values[0] == chapters.size()){
-                Log.d("Hung", "values[0] -" + values[0]);
 //                notificationBuilder.setOngoing(false).setProgress(0, 0, false).setContentText("Tải về thành công!");
                 onPostExecute(null);
             }
@@ -212,11 +220,16 @@ public class NotificationService extends Service {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if(isEnd) {
-                notificationBuilder.setOngoing(false).setProgress(0, 0, false).setContentText("Tải về thành công!");
+                if(chapters.size() == appDatabase.recentDao().loadAllChapterDetails(storyInformation.getStoryID()).length){
+                    appDatabase.recentDao().insertChapterInformation(chapters);
+                    storyInformation.setDownload(true);
+                    appDatabase.recentDao().insertStoryInformation(storyInformation);
+                    notificationBuilder.setOngoing(false).setProgress(0, 0, false).setContentText("Tải về thành công!");
+                }else {
+                    notificationBuilder.setOngoing(false).setProgress(0, 0, false).setContentText("Tải về thất bại!");
+                }
                 Notification notification = notificationBuilder.build();
                 notificationManager.notify(serviceID, notification);
-                Log.d("Hung", "getChapters - "+chapters.size());
-                Log.d("Hung", "Total chapter-" + appDatabase.recentDao().loadAllChapterDetails(storyInformation.getStoryID()).length);
 //            notification.flags = notification.flags | Notification.FLAG_NO_CLEAR;
                 stopForeground(false);
             stopSelf();

@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.chemander.story.data.model.StoryInformation;
 import com.chemander.story.data.remote.StoryService;
 import com.chemander.story.data.viewmodel.ChapterViewModel;
+import com.chemander.story.home.DownloadFragment;
 import com.chemander.story.home.HomeFragment;
 import com.chemander.story.home.LibraryFragment;
 import com.chemander.story.home.RecentFragment;
@@ -161,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        bottomNavigationView.getMenu().removeItem(R.id.navigation_Download);
+//        bottomNavigationView.getMenu().removeItem(R.id.navigation_Download);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -175,15 +176,18 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.navigation_library:
                         animateSearchBar(false);
-                        mTitle.setText("Mục yêu thích");
+                        mTitle.setText("Truyện yêu thích");
                         LibraryFragment libraryFragment = new LibraryFragment();
                         fragmentTransaction.replace(R.id.main_fragment, libraryFragment);
                         fragmentTransaction.commit();
                         return true;
-                    /*case R.id.navigation_Download:
-                        mTitle.setText(menuItem.getTitle());
+                    case R.id.navigation_Download:
                         animateSearchBar(false);
-                        return true;*/
+                        mTitle.setText("Truyện tải về");
+                        DownloadFragment downloadFragment = new DownloadFragment();
+                        fragmentTransaction.replace(R.id.main_fragment, downloadFragment);
+                        fragmentTransaction.commit();
+                        return true;
                     case R.id.navigation_account:
                         animateSearchBar(false);
                         mTitle.setText("Truyện đã đọc");

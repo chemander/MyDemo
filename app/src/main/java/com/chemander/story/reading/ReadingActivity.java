@@ -126,7 +126,6 @@ public class ReadingActivity extends Fragment {
         storyInformation = chapterViewModel.getStoryInformation();
         storyId = storyInformation.getStoryID();
         currentPosition = storyInformation.getRecentPosition();
-        Log.d("Hung", "CurrentPostions"+currentPosition);
         txtStoryTitle.setText(storyInformation.getStoryName());
         chapterViewModel.getChapterId().observe(this, new Observer<String>() {
             @Override

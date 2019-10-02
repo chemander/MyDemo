@@ -32,7 +32,6 @@ public class StoryInformationNewsListDataSource extends PageKeyedDataSource<Inte
         storyService.getNewsStories(1, SettingsManager.SIZE_OF_PAGE).enqueue(new Callback<GetStoriesInformation>() {
             @Override
             public void onResponse(Call<GetStoriesInformation> call, Response<GetStoriesInformation> response) {
-                Log.d("Hung", "Log.d(\"Hung\", \"Cannot load data\"); load data");
                 List<StoryInformation> storyInformations = new ArrayList<>();
                 if(response.isSuccessful()){
                     GetStoriesInformation getStoriesInformation = response.body();

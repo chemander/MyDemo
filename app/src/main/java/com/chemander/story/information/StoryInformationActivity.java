@@ -1,19 +1,26 @@
 package com.chemander.story.information;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.chemander.story.data.viewmodel.ChapterViewModel;
 import com.chemander.story.offline.service.NotificationService;
 import com.chemander.story.reading.AdapterChapter;
@@ -37,6 +46,7 @@ import com.chemander.story.reading.ChaptersActivity;
 import com.chemander.story.utils.ApiUtils;
 import com.chemander.story.utils.SettingsManager;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,11 +123,12 @@ public class StoryInformationActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-    byte[] byteArrays;
     AppCompatActivity aaa = this;
     private void setParameters() {
         if(storyInformation != null) {
-            Glide.with(this).load(storyInformation.getStoryImgUrl()).into(cover);
+            if(!storyInformation.isDownload()) {
+                Glide.with(this).load(storyInformation.getStoryImgUrl()).into(cover);
+            }else {
             /*Glide.with(this).asBitmap().load(storyInformation.getStoryImgUrl()).into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -132,6 +143,13 @@ public class StoryInformationActivity extends AppCompatActivity {
                     Log.d("Hung", "String: "+encodedImageString);
                 }
             });*/
+                byte[] byteArrays;
+                String encodedImageString = storyInformation.getSaveCover();
+                byteArrays = Base64.decode(encodedImageString, Base64.DEFAULT);
+                Bitmap bmimage = BitmapFactory.decodeByteArray(byteArrays, 0,
+                        byteArrays.length);
+                Glide.with(aaa).asBitmap().load(bmimage).into(cover);
+            }
             title.setText(storyInformation.getStoryName());
 //            titleStoryBar.setText(storyInformation.getStoryName());
             String descriptionContent = storyInformation.getStoryDescription();
@@ -242,7 +260,6 @@ public class StoryInformationActivity extends AppCompatActivity {
 
         StoryInformation story = viewModel.findStoryInformation(storyId);
         if(story!=null){
-            Log.d("Hung", "storyID = "+story.getStoryID());
             storyInformation = story;
             setParameters();
 //            initButtonFavorite();
@@ -253,11 +270,39 @@ public class StoryInformationActivity extends AppCompatActivity {
     }
 
     private void startDownload() {
-        Toast.makeText(this, "Tính năng đang cập nhật...", Toast.LENGTH_SHORT).show();
-        /*
-        Intent intent = new Intent(this, NotificationService.class);
-        intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation);
-        startService(intent);*/
+//        Toast.makeText(this, "Tính năng đang cập nhật...", Toast.LENGTH_SHORT).show();
+        if(isMyServiceRunning(NotificationService.class)){
+            Toast.makeText(this, "Bạn đang tải một truyện, vui lòng chờ tới khi hoàn thành!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(storyInformation.isDownload()){
+            Toast.makeText(this, "Truyện đã được tải về!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Glide.with(this).asBitmap().load(storyInformation.getStoryImgUrl()).into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    resource.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    String encodedImageString = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                    storyInformation.setSaveCover(encodedImageString);
+                    Intent intent = new Intent(getApplicationContext(), NotificationService.class);
+                    intent.putExtra(SettingsManager.STORY_INFORMATION, storyInformation);
+                    startService(intent);
+                }
+            });
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void initButtonFavorite(){
